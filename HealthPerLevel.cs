@@ -27,4 +27,10 @@ public class HealthPerLevel(
     ModHelper modHelper,
     JsonUtil jsonUtil) : IOnLoad
 {
+    public Task OnLoad()
+    {
+        var playerHealth = databaseService.GetGlobals().Configuration.Health.ProfileHealthSettings.BodyPartsSettings;
+
+        return Task.CompletedTask;
+    }
 }
