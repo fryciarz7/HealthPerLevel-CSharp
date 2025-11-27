@@ -21,6 +21,10 @@ public record ModMetadata : AbstractModMetadata
 }
 
 [Injectable]
-public class HealthPerLevel
+public class HealthPerLevel(
+    ISptLogger<HealthPerLevel> logger,
+    DatabaseService databaseService,
+    ModHelper modHelper,
+    JsonUtil jsonUtil) : IOnLoad
 {
 }
