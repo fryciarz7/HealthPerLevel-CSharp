@@ -17,6 +17,7 @@ public record ModMetadata : AbstractModMetadata
     public override string? License { get; init; } = "Creative Commons BY-NC-SA 3.0";
 }
 
+[Injectable]
 public class HealthPerLevel
 {
 }
