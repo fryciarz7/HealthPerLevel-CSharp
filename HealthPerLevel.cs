@@ -6,9 +6,11 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using HealthPerLevel_cs.config;
 using Microsoft.Extensions.Logging;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Generators;
+using SPTarkov.Server.Core.Helpers;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
@@ -29,22 +31,20 @@ namespace HealthPerLevel_cs
     public class HealthPerLevel
     {
         private readonly SaveServer _saveServer;
-        private readonly DatabaseServer _databaseServer;
-        private readonly FenceService _fenceService;
-        private readonly ConfigServer _configServer;
+        private readonly ModHelper _modHelper;
         private readonly ISptLogger<HealthPerLevel> _logger;
 
+        private readonly ConfigJson _config;
         private const string LogPrefix = "[HealthPerLevel] ";
 
-        public HealthPerLevel(SaveServer saveServer, DatabaseServer databaseServer, ConfigServer configServer, FenceService fenceService, ISptLogger<HealthPerLevel> logger)
+        public HealthPerLevel(SaveServer saveServer, ModHelper modHelper, ISptLogger<HealthPerLevel> logger)
         {
             _saveServer = saveServer;
-            _databaseServer = databaseServer;
-            _configServer = configServer;
-            _fenceService = fenceService;
+            _modHelper = modHelper;
             _logger = logger;
 
-            //LoadConfig();
+            var pathToMod = _modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
+            _config = _modHelper.GetJsonDataFromFile<ConfigJson>(pathToMod, "config/config.json");
         }
 
         public Task DoStuff()
@@ -59,8 +59,6 @@ namespace HealthPerLevel_cs
             {
                 var profiles = _saveServer.GetProfiles();
                 int modifiedCount = 0;
-
-                _logger.Info(profiles.Count.ToString());
 
                 foreach (var kvp in profiles)
                 {
@@ -82,13 +80,13 @@ namespace HealthPerLevel_cs
                     head.Health.Maximum = newMax;
                     if (head.Health.Current > newMax)
                         head.Health.Current = newMax;
-                    Console.WriteLine($"\x1b[36m🎮 [Jiang Hu] Increased {pmc.Info.Nickname}'s Head HP to {newMax} (+{newMax - 35})    头变大啦\x1b[0m");
+                    _logger.Info($"{LogPrefix}Increased {pmc.Info.Nickname}'s Head HP to {newMax} (+{newMax - 35})    头变大啦\x1b[0m");
                     modifiedCount++;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\x1b[36m❌ [Jiang Hu] Error adjusting head HP: {ex.Message}  \x1b[0m");
+                _logger.Error($"{LogPrefix}Error adjusting head HP: {ex.Message}  \x1b[0m");
             }
         }
     }
