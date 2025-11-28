@@ -34,6 +34,8 @@ namespace HealthPerLevel_cs
         private readonly ConfigServer _configServer;
         private readonly ISptLogger<HealthPerLevel> _logger;
 
+        private const string LogPrefix = "[HealthPerLevel] ";
+
         public HealthPerLevel(SaveServer saveServer, DatabaseServer databaseServer, ConfigServer configServer, FenceService fenceService, ISptLogger<HealthPerLevel> logger)
         {
             _saveServer = saveServer;
