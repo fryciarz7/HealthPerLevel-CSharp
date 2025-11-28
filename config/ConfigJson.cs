@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HealthPerLevel_cs.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,18 +11,19 @@ namespace HealthPerLevel_cs.config
     {
         public bool enabled { get; set; }
         public PMC PMC { get; set; }
+        public SCAV SCAV { get; set; }
     }
 
-    public class PMC
+    public class PMC : ICharacter
     {
         public int levels_per_increment { get; set; }
         public bool level_cap { get; set; }
         public int level_cap_value { get; set; }
-        public Base_Health base_health { get; set; }
-        public Increase_Per_Level increase_per_level { get; set; }
+        public Base_Health_PMC base_health { get; set; }
+        public Increase_Per_Level_PMC increase_per_level { get; set; }
     }
 
-    public class Base_Health
+    public class Base_Health_PMC : IBaseHealth
     {
         public int thorax_base_health { get; set; }
         public int stomach_base_health { get; set; }
@@ -32,7 +34,38 @@ namespace HealthPerLevel_cs.config
         public int right_leg_base_health { get; set; }
     }
 
-    public class Increase_Per_Level
+    public class Increase_Per_Level_PMC : IIncreasePerLevel
+    {
+        public int thorax_health_per_level { get; set; }
+        public int stomach_health_per_level { get; set; }
+        public int head_health_per_level { get; set; }
+        public int left_arm_per_level { get; set; }
+        public int right_arm_per_level { get; set; }
+        public int left_leg_per_level { get; set; }
+        public int right_leg_per_level { get; set; }
+    }
+
+    public class SCAV : ICharacter
+    {
+        public int levels_per_increment { get; set; }
+        public bool level_cap { get; set; }
+        public int level_cap_value { get; set; }
+        public Base_Health_SCAV base_health { get; set; }
+        public Increase_Per_Level_SCAV increase_per_level { get; set; }
+    }
+
+    public class Base_Health_SCAV : IBaseHealth
+    {
+        public int thorax_base_health { get; set; }
+        public int stomach_base_health { get; set; }
+        public int head_base_health { get; set; }
+        public int left_arm_base_health { get; set; }
+        public int right_arm_base_health { get; set; }
+        public int left_leg_base_health { get; set; }
+        public int right_leg_base_health { get; set; }
+    }
+
+    public class Increase_Per_Level_SCAV : IIncreasePerLevel
     {
         public int thorax_health_per_level { get; set; }
         public int stomach_health_per_level { get; set; }
