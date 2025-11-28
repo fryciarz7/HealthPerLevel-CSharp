@@ -27,7 +27,7 @@
   "SCAV": {
     "levels_per_increment": 5,
     "level_cap": false,
-    "level_cap_value": 30,
+    "level_cap_value": 20,
 
     "base_health": {
       "thorax_base_health": 85,

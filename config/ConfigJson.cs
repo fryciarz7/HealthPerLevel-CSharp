@@ -1,4 +1,5 @@
 ﻿using HealthPerLevel_cs.Interfaces;
+using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace HealthPerLevel_cs.config
         public SCAV SCAV { get; set; }
     }
 
-    public class PMC : ICharacter
+    public class PMC : ICharacter<Base_Health_PMC, Increase_Per_Level_PMC>
     {
         public int levels_per_increment { get; set; }
         public bool level_cap { get; set; }
@@ -45,7 +46,7 @@ namespace HealthPerLevel_cs.config
         public int right_leg_per_level { get; set; }
     }
 
-    public class SCAV : ICharacter
+    public class SCAV : ICharacter<Base_Health_SCAV, Increase_Per_Level_SCAV>
     {
         public int levels_per_increment { get; set; }
         public bool level_cap { get; set; }
