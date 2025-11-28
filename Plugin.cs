@@ -60,7 +60,8 @@ public class HealthPerLevelOnLoad : IOnLoad
     public async Task OnLoad()
     {
         await _saveServer.LoadAsync();
-        await _test1.DoStuff();
+        await _test1.DoStuff(true);
+        _logger.Info($"{LogPrefix}Mod loaded...");
         await Task.CompletedTask;
     }
 }
@@ -92,7 +93,7 @@ public class HealthPerLevelOnUpdate : IOnUpdate
     public async Task<bool> OnUpdate(long secondsSinceLastRun)
     {
         await _saveServer.LoadAsync();
-        await _test1.DoStuff();
+        await _test1.DoStuff(false);
         return await Task.FromResult(true);
     }
 }

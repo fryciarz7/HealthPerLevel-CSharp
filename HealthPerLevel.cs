@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using HealthPerLevel_cs.config;
+using HealthPerLevel_cs.Interfaces;
 using Microsoft.Extensions.Logging;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Generators;
@@ -15,6 +16,7 @@ using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Eft.Hideout;
+using SPTarkov.Server.Core.Models.Eft.Profile;
 using SPTarkov.Server.Core.Models.Enums;
 using SPTarkov.Server.Core.Models.Enums.Hideout;
 using SPTarkov.Server.Core.Models.Spt.Config;
@@ -37,18 +39,21 @@ namespace HealthPerLevel_cs
         private readonly ConfigJson _config;
         private const string LogPrefix = "[HealthPerLevel] ";
 
+        private bool isOnLoad = false;
+
         public HealthPerLevel(SaveServer saveServer, ModHelper modHelper, ISptLogger<HealthPerLevel> logger)
         {
             _saveServer = saveServer;
             _modHelper = modHelper;
             _logger = logger;
 
-            var pathToMod = _modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
+            string? pathToMod = _modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
             _config = _modHelper.GetJsonDataFromFile<ConfigJson>(pathToMod, "config/config.json");
         }
 
-        public Task DoStuff()
+        public Task DoStuff(bool _isOnLoad)
         {
+            isOnLoad = _isOnLoad;
             if (_config.enabled)
             {
                 HpChanges();
@@ -61,36 +66,111 @@ namespace HealthPerLevel_cs
             try
             {
                 var profiles = _saveServer.GetProfiles();
-                int modifiedCount = 0;
 
                 foreach (var kvp in profiles)
                 {
-                    var profile = kvp.Value;
-                    var pmc = profile?.CharacterData?.PmcData;
-                    if (pmc == null)
-                        continue;
+                    SptProfile? profile = kvp.Value;
 
-                    var exp = pmc?.Info?.Experience ?? 0;
-                    _logger.Info($"{kvp.Key} {exp}");
-                    int bonusHp = Math.Min(exp / 30000, 65);
-                    int newMax = exp; // Math.Min(35 + bonusHp, 100);
-
-                    if (pmc.Health?.BodyParts == null || !pmc.Health.BodyParts.ContainsKey("Head"))
-                        continue;
-
-                    var head = pmc.Health.BodyParts["Head"];
-
-                    head.Health.Maximum = newMax;
-                    if (head.Health.Current > newMax)
-                        head.Health.Current = newMax;
-                    _logger.Info($"{LogPrefix}Increased {pmc.Info.Nickname}'s Head HP to {newMax} (+{newMax - 35})    头变大啦\x1b[0m");
-                    modifiedCount++;
+                    if (profile?.CharacterData?.PmcData != null)
+                    {
+                        //_logger.Info($"{LogPrefix}Modify PMC for {kvp.Key}");
+                        CalculateCharacterData(profile.CharacterData.PmcData, _config.PMC);
+                    }
+                    if (profile?.CharacterData?.ScavData != null)
+                    {
+                        //_logger.Info($"{LogPrefix}Modify SCAV for {kvp.Key}");
+                        CalculateCharacterData(profile.CharacterData.ScavData, _config.SCAV);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                _logger.Error($"{LogPrefix}Error adjusting head HP: {ex.Message}  \x1b[0m");
+                _logger.Error($"{LogPrefix}Error: {ex.Message}");
             }
+        }
+
+        private void CalculateCharacterData<T, E>(PmcData character, ICharacter<T, E> charType)
+        {
+            double? accLv = CheckLevelCap(character, charType);// character.Info?.Level;
+            //_logger.Info($"{LogPrefix}accLv: {accLv.Value}");
+            //_logger.Info($"{LogPrefix}GetPmcIncrement(accLv.Value) {GetPmcIncrement(accLv.Value)}");
+            foreach (var (key, value) in character.Health.BodyParts)
+            {
+                if (value != null && value.Health != null)
+                {
+                    ModifyHealth(accLv, charType, key, value);
+                }
+            }
+        }
+
+        private int CheckLevelCap<T, E>(PmcData character, ICharacter<T, E> charType)
+        {
+            return charType.level_cap ? Math.Min(character.Info.Level.Value, charType.level_cap_value) : character.Info.Level.Value;
+        }
+
+        private void ModifyHealth<T, E>(double? accLv, ICharacter<T, E> charType, string key, BodyPartHealth value)
+        {
+            IBaseHealth baseHealth = charType.base_health as IBaseHealth;
+            IIncreasePerLevel increaseHealth = charType.increase_per_level as IIncreasePerLevel;
+            switch (key)
+            {
+                case "Head":
+                    value.Health.Maximum =
+                        baseHealth.head_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.head_health_per_level);
+                    break;
+
+                case "Chest":
+                    value.Health.Maximum =
+                        baseHealth.thorax_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.thorax_health_per_level);
+                    break;
+
+                case "Stomach":
+                    value.Health.Maximum =
+                        baseHealth.stomach_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.stomach_health_per_level);
+                    break;
+
+                case "LeftArm":
+                    value.Health.Maximum =
+                        baseHealth.left_arm_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.left_arm_per_level);
+                    break;
+
+                case "LeftLeg":
+                    value.Health.Maximum =
+                        baseHealth.left_leg_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.left_leg_per_level);
+                    break;
+
+                case "RightArm":
+                    value.Health.Maximum =
+                        baseHealth.right_arm_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.right_arm_per_level);
+                    break;
+
+                case "RightLeg":
+                    value.Health.Maximum =
+                        baseHealth.right_leg_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.right_leg_per_level);
+                    break;
+
+                default:
+                    _logger.Info($"{key} is missing");
+                    break;
+            }
+            _logger.Info(LogPrefix + baseHealth.GetType().ToString());
+            if (value.Health.Current > value.Health.Maximum)
+            {
+                _logger.Warning($"{LogPrefix} how does your {key} has more health than max? Let me fix it...");
+                value.Health.Current = value.Health.Maximum;
+            }
+            if (baseHealth is Base_Health_SCAV && isOnLoad)
+            {
+                //_logger.Info($"{LogPrefix}Resetting {baseHealth.GetType().ToString()} {key} health... isOnLoad: {isOnLoad}");
+                value.Health.Current = value.Health.Maximum;
+            }
+
+            _logger.Success($"{LogPrefix}Modified {key} to {value.Health.Maximum}");
+        }
+
+        private double GetPmcIncrement<T, E>(double accountLevel, ICharacter<T, E> charType)
+        {
+            return Math.Truncate((accountLevel) / (double)charType.levels_per_increment);
         }
     }
 }
