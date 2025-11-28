@@ -49,7 +49,10 @@ namespace HealthPerLevel_cs
 
         public Task DoStuff()
         {
-            HpChanges();
+            if (_config.enabled)
+            {
+                HpChanges();
+            }
             return Task.CompletedTask;
         }
 
