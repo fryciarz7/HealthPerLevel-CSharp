@@ -1,2 +1,27 @@
 ﻿{
+  "enabled": true,
+  "PMC": {
+    "levels_per_increment": 5,
+    "level_cap": false,
+    "level_cap_value": 30,
+
+    "base_health": {
+      "thorax_base_health": 85,
+      "stomach_base_health": 70,
+      "head_base_health": 35,
+      "left_arm_base_health": 60,
+      "right_arm_base_health": 60,
+      "left_leg_base_health": 65,
+      "right_leg_base_health": 65
+    },
+    "increase_per_level": {
+      "thorax_health_per_level": 2,
+      "stomach_health_per_level": 2,
+      "head_health_per_level": 2,
+      "left_arm_per_level": 3,
+      "right_arm_per_level": 3,
+      "left_leg_per_level": 3,
+      "right_leg_per_level": 3
+    }
+  }
 }
