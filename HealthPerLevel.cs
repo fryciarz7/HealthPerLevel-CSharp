@@ -98,7 +98,7 @@ namespace HealthPerLevel_cs
             {
                 if (value != null && value.Health != null)
                 {
-                    ModifyHealth(accLv, charType, key, value);
+                    ModifyHealth(accLv.Value, charType, key, value);
                 }
             }
         }
@@ -108,7 +108,7 @@ namespace HealthPerLevel_cs
             return charType.level_cap ? Math.Min(character.Info.Level.Value, charType.level_cap_value) : character.Info.Level.Value;
         }
 
-        private void ModifyHealth<T, E>(double? accLv, ICharacter<T, E> charType, string key, BodyPartHealth value)
+        private void ModifyHealth<T, E>(double accLv, ICharacter<T, E> charType, string key, BodyPartHealth value)
         {
             IBaseHealth baseHealth = charType.base_health as IBaseHealth;
             IIncreasePerLevel increaseHealth = charType.increase_per_level as IIncreasePerLevel;
@@ -116,37 +116,37 @@ namespace HealthPerLevel_cs
             {
                 case "Head":
                     value.Health.Maximum =
-                        baseHealth.head_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.head_health_per_level);
+                        baseHealth.head_base_health + (GetIncrement(accLv, charType) * increaseHealth.head_health_per_level);
                     break;
 
                 case "Chest":
                     value.Health.Maximum =
-                        baseHealth.thorax_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.thorax_health_per_level);
+                        baseHealth.thorax_base_health + (GetIncrement(accLv, charType) * increaseHealth.thorax_health_per_level);
                     break;
 
                 case "Stomach":
                     value.Health.Maximum =
-                        baseHealth.stomach_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.stomach_health_per_level);
+                        baseHealth.stomach_base_health + (GetIncrement(accLv, charType) * increaseHealth.stomach_health_per_level);
                     break;
 
                 case "LeftArm":
                     value.Health.Maximum =
-                        baseHealth.left_arm_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.left_arm_per_level);
+                        baseHealth.left_arm_base_health + (GetIncrement(accLv, charType) * increaseHealth.left_arm_per_level);
                     break;
 
                 case "LeftLeg":
                     value.Health.Maximum =
-                        baseHealth.left_leg_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.left_leg_per_level);
+                        baseHealth.left_leg_base_health + (GetIncrement(accLv, charType) * increaseHealth.left_leg_per_level);
                     break;
 
                 case "RightArm":
                     value.Health.Maximum =
-                        baseHealth.right_arm_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.right_arm_per_level);
+                        baseHealth.right_arm_base_health + (GetIncrement(accLv, charType) * increaseHealth.right_arm_per_level);
                     break;
 
                 case "RightLeg":
                     value.Health.Maximum =
-                        baseHealth.right_leg_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.right_leg_per_level);
+                        baseHealth.right_leg_base_health + (GetIncrement(accLv, charType) * increaseHealth.right_leg_per_level);
                     break;
 
                 default:
