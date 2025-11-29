@@ -1,10 +1,4 @@
 ﻿using HealthPerLevel_cs.Interfaces;
-using SPTarkov.Server.Core.Models.Eft.Common.Tables;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HealthPerLevel_cs.config
 {

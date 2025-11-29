@@ -1,20 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Diagnostics;
-using Microsoft.Extensions.Logging;
-using SPTarkov.DI.Annotations;
-using SPTarkov.Server.Core.Callbacks;
+﻿using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
-using SPTarkov.Server.Core.Helpers;
-using SPTarkov.Server.Core.Models.Common;
-using SPTarkov.Server.Core.Models.Eft.Common;
-using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Utils;
-using SPTarkov.Server.Core.Routers;
 using SPTarkov.Server.Core.Servers;
-using SPTarkov.Server.Core.Servers.Http;
 using SPTarkov.Server.Core.Services;
-using SPTarkov.Server.Core.Utils;
 
 namespace HealthPerLevel_cs;
 public record ModMetadata : AbstractModMetadata
@@ -69,22 +58,14 @@ public class HealthPerLevelOnLoad : IOnLoad
 [Injectable(TypePriority = OnUpdateOrder.InsuranceCallbacks)]
 public class HealthPerLevelOnUpdate : IOnUpdate
 {
-    private const string LogPrefix = "[HealthPerLevel] ";
-    private readonly ISptLogger<HealthPerLevelOnLoad> _logger;
-    private readonly DatabaseService _databaseService;
-
     private readonly SaveServer _saveServer;
 
     private readonly HealthPerLevel _test1;
 
     public HealthPerLevelOnUpdate(
-        ISptLogger<HealthPerLevelOnLoad> logger,
-        DatabaseService databaseService,
         SaveServer saveServer,
         HealthPerLevel test1)
     {
-        this._logger = logger;
-        this._databaseService = databaseService;
         this._saveServer = saveServer;
 
         _test1 = test1;
