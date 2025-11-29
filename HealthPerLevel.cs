@@ -116,37 +116,37 @@ namespace HealthPerLevel_cs
             {
                 case "Head":
                     value.Health.Maximum =
-                        baseHealth.head_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.head_health_per_level);
+                        baseHealth.head_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.head_health_per_level);
                     break;
 
                 case "Chest":
                     value.Health.Maximum =
-                        baseHealth.thorax_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.thorax_health_per_level);
+                        baseHealth.thorax_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.thorax_health_per_level);
                     break;
 
                 case "Stomach":
                     value.Health.Maximum =
-                        baseHealth.stomach_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.stomach_health_per_level);
+                        baseHealth.stomach_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.stomach_health_per_level);
                     break;
 
                 case "LeftArm":
                     value.Health.Maximum =
-                        baseHealth.left_arm_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.left_arm_per_level);
+                        baseHealth.left_arm_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.left_arm_per_level);
                     break;
 
                 case "LeftLeg":
                     value.Health.Maximum =
-                        baseHealth.left_leg_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.left_leg_per_level);
+                        baseHealth.left_leg_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.left_leg_per_level);
                     break;
 
                 case "RightArm":
                     value.Health.Maximum =
-                        baseHealth.right_arm_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.right_arm_per_level);
+                        baseHealth.right_arm_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.right_arm_per_level);
                     break;
 
                 case "RightLeg":
                     value.Health.Maximum =
-                        baseHealth.right_leg_base_health + (GetPmcIncrement(accLv.Value, charType) * increaseHealth.right_leg_per_level);
+                        baseHealth.right_leg_base_health + (GetIncrement(accLv.Value, charType) * increaseHealth.right_leg_per_level);
                     break;
 
                 default:
@@ -168,7 +168,7 @@ namespace HealthPerLevel_cs
             _logger.Success($"{LogPrefix}Modified {key} to {value.Health.Maximum}");
         }
 
-        private double GetPmcIncrement<T, E>(double accountLevel, ICharacter<T, E> charType)
+        private double GetIncrement<T, E>(double accountLevel, ICharacter<T, E> charType)
         {
             return Math.Truncate((accountLevel) / (double)charType.levels_per_increment);
         }
