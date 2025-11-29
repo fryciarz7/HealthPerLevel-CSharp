@@ -94,11 +94,11 @@ namespace HealthPerLevel_cs
             double? accLv = CheckLevelCap(character, charType);// character.Info?.Level;
             //_logger.Info($"{LogPrefix}accLv: {accLv.Value}");
             //_logger.Info($"{LogPrefix}GetPmcIncrement(accLv.Value) {GetPmcIncrement(accLv.Value)}");
-            foreach (var (key, value) in character.Health.BodyParts)
+            foreach (var (bodyPartName, bodyPart) in character.Health.BodyParts)
             {
-                if (value != null && value.Health != null)
+                if (bodyPart != null && bodyPart.Health != null)
                 {
-                    ModifyHealth(accLv.Value, charType, key, value);
+                    ModifyHealth(accLv.Value, charType, bodyPartName, bodyPart);
                 }
             }
         }
@@ -108,64 +108,74 @@ namespace HealthPerLevel_cs
             return charType.level_cap ? Math.Min(character.Info.Level.Value, charType.level_cap_value) : character.Info.Level.Value;
         }
 
-        private void ModifyHealth<T, E>(double accLv, ICharacter<T, E> charType, string key, BodyPartHealth value)
+        private void ModifyHealth<T, E>(double accLv, ICharacter<T, E> charType, string bodyPartName, BodyPartHealth bodyPart)
         {
             IBaseHealth baseHealth = charType.base_health as IBaseHealth;
             IIncreasePerLevel increaseHealth = charType.increase_per_level as IIncreasePerLevel;
-            switch (key)
+            switch (bodyPartName)
             {
                 case "Head":
-                    value.Health.Maximum =
+                    bodyPart.Health.Maximum =
                         baseHealth.head_base_health + (GetIncrement(accLv, charType) * increaseHealth.head_health_per_level);
                     break;
 
                 case "Chest":
-                    value.Health.Maximum =
+                    bodyPart.Health.Maximum =
                         baseHealth.thorax_base_health + (GetIncrement(accLv, charType) * increaseHealth.thorax_health_per_level);
                     break;
 
                 case "Stomach":
-                    value.Health.Maximum =
+                    bodyPart.Health.Maximum =
                         baseHealth.stomach_base_health + (GetIncrement(accLv, charType) * increaseHealth.stomach_health_per_level);
                     break;
 
                 case "LeftArm":
-                    value.Health.Maximum =
+                    bodyPart.Health.Maximum =
                         baseHealth.left_arm_base_health + (GetIncrement(accLv, charType) * increaseHealth.left_arm_per_level);
                     break;
 
                 case "LeftLeg":
-                    value.Health.Maximum =
+                    bodyPart.Health.Maximum =
                         baseHealth.left_leg_base_health + (GetIncrement(accLv, charType) * increaseHealth.left_leg_per_level);
                     break;
 
                 case "RightArm":
-                    value.Health.Maximum =
+                    bodyPart.Health.Maximum =
                         baseHealth.right_arm_base_health + (GetIncrement(accLv, charType) * increaseHealth.right_arm_per_level);
                     break;
 
                 case "RightLeg":
-                    value.Health.Maximum =
+                    bodyPart.Health.Maximum =
                         baseHealth.right_leg_base_health + (GetIncrement(accLv, charType) * increaseHealth.right_leg_per_level);
                     break;
 
                 default:
-                    _logger.Info($"{key} is missing");
+                    _logger.Info($"{bodyPartName} is missing");
                     break;
             }
-            _logger.Info(LogPrefix + baseHealth.GetType().ToString());
-            if (value.Health.Current > value.Health.Maximum)
-            {
-                _logger.Warning($"{LogPrefix} how does your {key} has more health than max? Let me fix it...");
-                value.Health.Current = value.Health.Maximum;
-            }
+            //_logger.Info(LogPrefix + baseHealth.GetType().ToString());
+            CheckIfTooMuchHealth(bodyPartName, bodyPart);
+            ResetScavHealthOnLoad(bodyPart, baseHealth);
+
+            _logger.Success($"{LogPrefix}Modified {bodyPartName} to {bodyPart.Health.Maximum}");
+        }
+
+        private void ResetScavHealthOnLoad(BodyPartHealth bodyPart, IBaseHealth baseHealth)
+        {
             if (baseHealth is Base_Health_SCAV && isOnLoad)
             {
                 //_logger.Info($"{LogPrefix}Resetting {baseHealth.GetType().ToString()} {key} health... isOnLoad: {isOnLoad}");
-                value.Health.Current = value.Health.Maximum;
+                bodyPart.Health.Current = bodyPart.Health.Maximum;
             }
+        }
 
-            _logger.Success($"{LogPrefix}Modified {key} to {value.Health.Maximum}");
+        private void CheckIfTooMuchHealth(string bodyPartName, BodyPartHealth bodyPart)
+        {
+            if (bodyPart.Health.Current > bodyPart.Health.Maximum)
+            {
+                _logger.Warning($"{LogPrefix}How does your {bodyPartName} has more health than max? ({bodyPart.Health.Current}/{bodyPart.Health.Maximum}) Let me fix it...");
+                bodyPart.Health.Current = bodyPart.Health.Maximum;
+            }
         }
 
         private double GetIncrement<T, E>(double accountLevel, ICharacter<T, E> charType)
