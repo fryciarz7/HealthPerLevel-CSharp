@@ -1,31 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using HealthPerLevel_cs.config;
 using HealthPerLevel_cs.Interfaces;
-using Microsoft.Extensions.Logging;
 using SPTarkov.DI.Annotations;
-using SPTarkov.Server.Core.Generators;
 using SPTarkov.Server.Core.Helpers;
-using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
-using SPTarkov.Server.Core.Models.Eft.Hideout;
 using SPTarkov.Server.Core.Models.Eft.Profile;
 using SPTarkov.Server.Core.Models.Enums;
-using SPTarkov.Server.Core.Models.Enums.Hideout;
-using SPTarkov.Server.Core.Models.Spt.Config;
-using SPTarkov.Server.Core.Models.Spt.Fence;
-using SPTarkov.Server.Core.Models.Spt.Server;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Servers;
-using SPTarkov.Server.Core.Services;
-using SPTarkov.Server.Core.Utils.Json;
 
 namespace HealthPerLevel_cs
 {
