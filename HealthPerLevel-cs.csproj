@@ -7,6 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);DebugPmcOnly;DebugScavOnly</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="SPTarkov.Common" Version="4.0.7" />
     <PackageReference Include="SPTarkov.DI" Version="4.0.7" />
