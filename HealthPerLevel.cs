@@ -102,47 +102,49 @@ namespace HealthPerLevel_cs
 
         private void ModifyHealth<T, E, G>(double accLv, ICharacter<T, E, G> charType, double hpSkillv, string bodyPartName, BodyPartHealth bodyPart)
         {
-            IBaseHealth baseHealth = charType.base_health as IBaseHealth;
-            IIncreasePerLevel increaseHealth = charType.increase_per_level as IIncreasePerLevel;
-            IIncreasePerLevel increasePerHealthSkill = charType.increase_per_health_skill_level as IIncreasePerLevel;
+            IHealth baseHealth = charType.base_health as IHealth;
+            IHealth increaseHealth = charType.increase_per_level as IHealth;
+            IHealth increasePerHealthSkill = charType.increase_per_health_skill_level as IHealth;
+
+            double increment = GetIncrement(accLv, charType);
 
             if (charType.health_per_health_skill_level)
 
                 switch (bodyPartName)
                 {
                     case "Head":
-                        bodyPart.Health.Maximum = AddHpPerLevel(accLv, charType, bodyPart, baseHealth, increaseHealth.head_health_per_level) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.head_health_per_level);
+                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.head_health, increaseHealth.head_health) +
+                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.head_health);
                         break;
 
                     case "Chest":
-                        bodyPart.Health.Maximum = AddHpPerLevel(accLv, charType, bodyPart, baseHealth, increaseHealth.thorax_health_per_level) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.thorax_health_per_level);
+                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.thorax_health, increaseHealth.thorax_health) +
+                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.thorax_health);
                         break;
 
                     case "Stomach":
-                        bodyPart.Health.Maximum = AddHpPerLevel(accLv, charType, bodyPart, baseHealth, increaseHealth.stomach_health_per_level) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.stomach_health_per_level);
+                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.stomach_health, increaseHealth.stomach_health) +
+                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.stomach_health);
                         break;
 
                     case "LeftArm":
-                        bodyPart.Health.Maximum = AddHpPerLevel(accLv, charType, bodyPart, baseHealth, increaseHealth.left_arm_per_level) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.left_arm_per_level);
+                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.left_arm_health, increaseHealth.left_arm_health) +
+                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.left_arm_health);
                         break;
 
                     case "LeftLeg":
-                        bodyPart.Health.Maximum = AddHpPerLevel(accLv, charType, bodyPart, baseHealth, increaseHealth.left_leg_per_level) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.left_leg_per_level);
+                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.left_leg_health, increaseHealth.left_leg_health) +
+                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.left_leg_health);
                         break;
 
                     case "RightArm":
-                        bodyPart.Health.Maximum = AddHpPerLevel(accLv, charType, bodyPart, baseHealth, increaseHealth.right_arm_per_level) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.right_arm_per_level);
+                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.right_arm_health, increaseHealth.right_arm_health) +
+                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.right_arm_health);
                         break;
 
                     case "RightLeg":
-                        bodyPart.Health.Maximum = AddHpPerLevel(accLv, charType, bodyPart, baseHealth, increaseHealth.right_leg_per_level) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.right_leg_per_level);
+                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.right_leg_health, increaseHealth.right_leg_health) +
+                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.right_leg_health);
                         break;
 
                     default:
@@ -156,9 +158,9 @@ namespace HealthPerLevel_cs
             //_logger.Success($"{LogPrefix}Modified {bodyPartName} to {bodyPart.Health.Maximum}");
         }
 
-        private double AddHpPerLevel<T, E, G>(double accLv, ICharacter<T, E, G> charType, BodyPartHealth bodyPart, IBaseHealth baseHealth, int increaseHealth)
+        private double AddHpPerLevel<T, E, G>(double inrement, ICharacter<T, E, G> charType, BodyPartHealth bodyPart, int baseHealth, int increaseHealth)
         {
-            return baseHealth.right_leg_base_health + (GetIncrement(accLv, charType) * increaseHealth);
+            return baseHealth + (inrement * increaseHealth);
         }
 
         private double AddHpPerSkillLevel<T, E, G>(ICharacter<T, E, G> charType, double hpSkillv, BodyPartHealth bodyPart, int increasePerHealthSkill)
@@ -179,7 +181,7 @@ namespace HealthPerLevel_cs
             return charType.level_cap ? Math.Min(character.Info.Level.Value, charType.level_cap_value) : character.Info.Level.Value;
         }
 
-        private void ResetScavHealthOnLoad(BodyPartHealth bodyPart, IBaseHealth baseHealth)
+        private void ResetScavHealthOnLoad(BodyPartHealth bodyPart, IHealth baseHealth)
         {
             if (baseHealth is Base_Health_SCAV && isOnLoad)
             {

@@ -9,32 +9,32 @@
     "level_health_skill_cap_value": 25,
 
     "base_health": {
-      "thorax_base_health": 85,
-      "stomach_base_health": 70,
-      "head_base_health": 35,
-      "left_arm_base_health": 60,
-      "right_arm_base_health": 60,
-      "left_leg_base_health": 65,
-      "right_leg_base_health": 65
+      "thorax_health": 85,
+      "stomach_health": 70,
+      "head_health": 35,
+      "left_arm_health": 60,
+      "right_arm_health": 60,
+      "left_leg_health": 65,
+      "right_leg_health": 65
     },
     "increase_per_level": {
-      "thorax_health_per_level": 2,
-      "stomach_health_per_level": 2,
-      "head_health_per_level": 2,
-      "left_arm_per_level": 3,
-      "right_arm_per_level": 3,
-      "left_leg_per_level": 3,
-      "right_leg_per_level": 3
+      "thorax_health": 2,
+      "stomach_health": 2,
+      "head_health": 2,
+      "left_arm_health": 3,
+      "right_arm_health": 3,
+      "left_leg_health": 3,
+      "right_leg_health": 3
     },
     "health_per_health_skill_level": true,
     "increase_per_health_skill_level": {
-      "thorax_health_per_level": 1,
-      "stomach_health_per_level": 1,
-      "head_health_per_level": 1,
-      "left_arm_per_level": 1,
-      "right_arm_per_level": 1,
-      "left_leg_per_level": 1,
-      "right_leg_per_level": 1
+      "thorax_health": 1,
+      "stomach_health": 1,
+      "head_health": 1,
+      "left_arm_health": 1,
+      "right_arm_health": 1,
+      "left_leg_health": 1,
+      "right_leg_health": 1
     }
   },
   "SCAV": {
@@ -46,32 +46,32 @@
     "level_health_skill_cap_value": 25,
 
     "base_health": {
-      "thorax_base_health": 85,
-      "stomach_base_health": 70,
-      "head_base_health": 35,
-      "left_arm_base_health": 60,
-      "right_arm_base_health": 60,
-      "left_leg_base_health": 65,
-      "right_leg_base_health": 65
+      "thorax_health": 85,
+      "stomach_health": 70,
+      "head_health": 35,
+      "left_arm_health": 60,
+      "right_arm_health": 60,
+      "left_leg_health": 65,
+      "right_leg_health": 65
     },
     "increase_per_level": {
-      "thorax_health_per_level": 2,
-      "stomach_health_per_level": 2,
-      "head_health_per_level": 2,
-      "left_arm_per_level": 3,
-      "right_arm_per_level": 3,
-      "left_leg_per_level": 3,
-      "right_leg_per_level": 3
+      "thorax_health": 2,
+      "stomach_health": 2,
+      "head_health": 2,
+      "left_arm_health": 3,
+      "right_arm_health": 3,
+      "left_leg_health": 3,
+      "right_leg_health": 3
     },
     "health_per_health_skill_level": true,
     "increase_per_health_skill_level": {
-      "thorax_health_per_level": 1,
-      "stomach_health_per_level": 1,
-      "head_health_per_level": 1,
-      "left_arm_per_level": 1,
-      "right_arm_per_level": 1,
-      "left_leg_per_level": 1,
-      "right_leg_per_level": 1
+      "thorax_health": 1,
+      "stomach_health": 1,
+      "head_health": 1,
+      "left_arm_health": 1,
+      "right_arm_health": 1,
+      "left_leg_health": 1,
+      "right_leg_health": 1
     }
   }
 }

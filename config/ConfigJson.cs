@@ -23,37 +23,37 @@ namespace HealthPerLevel_cs.config
         public Increase_Per_Health_Skill_Level_PMC increase_per_health_skill_level { get; set; }
     }
 
-    public class Base_Health_PMC : IBaseHealth
+    public class Base_Health_PMC : IHealth
     {
-        public int thorax_base_health { get; set; }
-        public int stomach_base_health { get; set; }
-        public int head_base_health { get; set; }
-        public int left_arm_base_health { get; set; }
-        public int right_arm_base_health { get; set; }
-        public int left_leg_base_health { get; set; }
-        public int right_leg_base_health { get; set; }
+        public int thorax_health { get; set; }
+        public int stomach_health { get; set; }
+        public int head_health { get; set; }
+        public int left_arm_health { get; set; }
+        public int right_arm_health { get; set; }
+        public int left_leg_health { get; set; }
+        public int right_leg_health { get; set; }
     }
 
-    public class Increase_Per_Level_PMC : IIncreasePerLevel
+    public class Increase_Per_Level_PMC : IHealth
     {
-        public int thorax_health_per_level { get; set; }
-        public int stomach_health_per_level { get; set; }
-        public int head_health_per_level { get; set; }
-        public int left_arm_per_level { get; set; }
-        public int right_arm_per_level { get; set; }
-        public int left_leg_per_level { get; set; }
-        public int right_leg_per_level { get; set; }
+        public int thorax_health { get; set; }
+        public int stomach_health { get; set; }
+        public int head_health { get; set; }
+        public int left_arm_health { get; set; }
+        public int right_arm_health { get; set; }
+        public int left_leg_health { get; set; }
+        public int right_leg_health { get; set; }
     }
 
-    public class Increase_Per_Health_Skill_Level_PMC : IIncreasePerLevel
+    public class Increase_Per_Health_Skill_Level_PMC : IHealth
     {
-        public int thorax_health_per_level { get; set; }
-        public int stomach_health_per_level { get; set; }
-        public int head_health_per_level { get; set; }
-        public int left_arm_per_level { get; set; }
-        public int right_arm_per_level { get; set; }
-        public int left_leg_per_level { get; set; }
-        public int right_leg_per_level { get; set; }
+        public int thorax_health { get; set; }
+        public int stomach_health { get; set; }
+        public int head_health { get; set; }
+        public int left_arm_health { get; set; }
+        public int right_arm_health { get; set; }
+        public int left_leg_health { get; set; }
+        public int right_leg_health { get; set; }
     }
 
     public class SCAV : ICharacter<Base_Health_SCAV, Increase_Per_Level_SCAV, Increase_Per_Health_Skill_Level_SCAV>
@@ -70,36 +70,36 @@ namespace HealthPerLevel_cs.config
         public Increase_Per_Health_Skill_Level_SCAV increase_per_health_skill_level { get; set; }
     }
 
-    public class Base_Health_SCAV : IBaseHealth
+    public class Base_Health_SCAV : IHealth
     {
-        public int thorax_base_health { get; set; }
-        public int stomach_base_health { get; set; }
-        public int head_base_health { get; set; }
-        public int left_arm_base_health { get; set; }
-        public int right_arm_base_health { get; set; }
-        public int left_leg_base_health { get; set; }
-        public int right_leg_base_health { get; set; }
+        public int thorax_health { get; set; }
+        public int stomach_health { get; set; }
+        public int head_health { get; set; }
+        public int left_arm_health { get; set; }
+        public int right_arm_health { get; set; }
+        public int left_leg_health { get; set; }
+        public int right_leg_health { get; set; }
     }
 
-    public class Increase_Per_Level_SCAV : IIncreasePerLevel
+    public class Increase_Per_Level_SCAV : IHealth
     {
-        public int thorax_health_per_level { get; set; }
-        public int stomach_health_per_level { get; set; }
-        public int head_health_per_level { get; set; }
-        public int left_arm_per_level { get; set; }
-        public int right_arm_per_level { get; set; }
-        public int left_leg_per_level { get; set; }
-        public int right_leg_per_level { get; set; }
+        public int thorax_health { get; set; }
+        public int stomach_health { get; set; }
+        public int head_health { get; set; }
+        public int left_arm_health { get; set; }
+        public int right_arm_health { get; set; }
+        public int left_leg_health { get; set; }
+        public int right_leg_health { get; set; }
     }
 
-    public class Increase_Per_Health_Skill_Level_SCAV : IIncreasePerLevel
+    public class Increase_Per_Health_Skill_Level_SCAV : IHealth
     {
-        public int thorax_health_per_level { get; set; }
-        public int stomach_health_per_level { get; set; }
-        public int head_health_per_level { get; set; }
-        public int left_arm_per_level { get; set; }
-        public int right_arm_per_level { get; set; }
-        public int left_leg_per_level { get; set; }
-        public int right_leg_per_level { get; set; }
+        public int thorax_health { get; set; }
+        public int stomach_health { get; set; }
+        public int head_health { get; set; }
+        public int left_arm_health { get; set; }
+        public int right_arm_health { get; set; }
+        public int left_leg_health { get; set; }
+        public int right_leg_health { get; set; }
     }
 }
