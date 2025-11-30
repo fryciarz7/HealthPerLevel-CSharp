@@ -170,15 +170,8 @@ namespace HealthPerLevel_cs
 
         private static double GetHealthLevel<T, E, G>(PmcData character, ICharacter<T, E, G> charType)
         {
-            double hpSkillLv = character?.Skills?.Common.Where(a => a.Id == SkillTypes.Health).Select(a => a.Progress)?.FirstOrDefault() ?? 0;
-            if (charType.level_health_skill_cap)
-            {
-                return Math.Min(hpSkillLv, charType.level_health_skill_cap_value);
-            }
-            else
-            {
-                return hpSkillLv;
-            }
+            double hpSkillLv = character?.Skills?.Common.FirstOrDefault(a => a.Id == SkillTypes.Health)?.Progress ?? 0;
+            return charType.level_health_skill_cap ? Math.Min(hpSkillLv, charType.level_health_skill_cap_value) : hpSkillLv;
         }
 
         private int CheckLevelCap<T, E, G>(PmcData character, ICharacter<T, E, G> charType)
