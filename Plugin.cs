@@ -1,9 +1,15 @@
 ﻿using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
+using SPTarkov.Server.Core.Helpers;
+using SPTarkov.Server.Core.Models.Common;
+using SPTarkov.Server.Core.Models.Eft.Bot;
 using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Servers;
 using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Utils;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace HealthPerLevel_cs;
 public record ModMetadata : AbstractModMetadata
@@ -31,25 +37,25 @@ public class HealthPerLevelOnLoad : IOnLoad
 
     private readonly SaveServer _saveServer;
 
-    private readonly HealthPerLevel _test1;
+    private readonly HealthPerLevel _hpl;
 
     public HealthPerLevelOnLoad(
         ISptLogger<HealthPerLevelOnLoad> logger,
         DatabaseService databaseService,
         SaveServer saveServer,
-        HealthPerLevel test1)
+        HealthPerLevel hpl)
     {
         this._logger = logger;
         this._databaseService = databaseService;
         this._saveServer = saveServer;
 
-        _test1 = test1;
+        _hpl = hpl;
     }
 
     public async Task OnLoad()
     {
         await _saveServer.LoadAsync();
-        await _test1.DoStuff(true);
+        await _hpl.DoStuff(true);
         _logger.Info($"{LogPrefix}Mod loaded...");
         await Task.CompletedTask;
     }
@@ -60,21 +66,21 @@ public class HealthPerLevelOnUpdate : IOnUpdate
 {
     private readonly SaveServer _saveServer;
 
-    private readonly HealthPerLevel _test1;
+    private readonly HealthPerLevel _hpl;
 
     public HealthPerLevelOnUpdate(
         SaveServer saveServer,
-        HealthPerLevel test1)
+        HealthPerLevel hpl)
     {
         this._saveServer = saveServer;
 
-        _test1 = test1;
+        _hpl = hpl;
     }
 
     public async Task<bool> OnUpdate(long secondsSinceLastRun)
     {
         await _saveServer.LoadAsync();
-        await _test1.DoStuff(false);
+        await _hpl.DoStuff(false);
         return await Task.FromResult(true);
     }
 }
