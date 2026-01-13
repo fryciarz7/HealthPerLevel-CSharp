@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using HealthPerLevel_cs.config;
+﻿using HealthPerLevel_cs.config;
 using HealthPerLevel_cs.Interfaces;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Helpers;
@@ -9,6 +8,9 @@ using SPTarkov.Server.Core.Models.Eft.Profile;
 using SPTarkov.Server.Core.Models.Enums;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Servers;
+using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace HealthPerLevel_cs
 {
@@ -42,6 +44,154 @@ namespace HealthPerLevel_cs
                 HpChanges();
             }
             return Task.CompletedTask;
+        }
+
+        public ValueTask<string> ModifyBotHealth(string? output)
+        {
+            if (_config.AI.enabled == false || output == null)
+            {
+                return new ValueTask<string>(output ?? "");
+            }
+            try
+            {
+                var root = JsonNode.Parse(output)!.AsObject();
+                var data = root["data"]!.AsArray();
+
+                foreach (var bot in data)
+                {
+                    var botRole = bot?["Info"]?["Settings"]?["Role"]?.GetValue<string>();
+                    switch (botRole)
+                    {
+                        case "pmcUSEC":
+                        case "pmcBEAR":
+                            if (!_config.AI.pmc_bot_health)
+                            {
+                                continue;
+                            }
+                            break;
+                        case "assault":
+                        case "marksman":
+                        case "cursedassault":
+                            if (!_config.AI.scav_bot_health)
+                            {
+                                continue;
+                            }
+                            break;
+                            break;
+                        case "gifter":
+                        case "exUsec":
+                        case "shooterBTR":
+                            if (!_config.AI.special_bot_health)
+                            {
+                                continue;
+                            }
+                            break;
+                        case "pmcBot": // Raider bots
+                            if (!_config.AI.raider_bot_health)
+                            {
+                                continue;
+                            }
+                            break;
+                        case "sectactPriest":
+                        case "sectactPriestEvent":
+                            if (!_config.AI.cultist_bot_health)
+                            {
+                                continue;
+                            }
+                            break;
+                        case "infectedAssault":
+                        case "infectedPmc":
+                        case "arenaFighterEvent":
+                            if (!_config.AI.event_boss_health)
+                            {
+                                continue;
+                            }
+                            break;
+                        default:
+                            if (botRole.StartsWith("boss") && !_config.AI.boss_bot_health)
+                            {
+                                continue;
+                            }
+                            if (botRole.StartsWith("follower") && !_config.AI.boss_bot_health)
+                            {
+                                continue;
+                            }
+                            break;
+                    }
+
+                    var botLevel = bot?["Info"]?["Level"]?.GetValue<int>() ?? 1;
+                    ICharacter<Base_Health_PMC, Increase_Per_Level_PMC, Increase_Per_Health_Skill_Level_PMC> charType = _config.PMC;
+                    double increment = GetIncrement(botLevel, charType);
+                    IHealth base_health = charType.base_health;
+                    IHealth increaseHealth = charType.increase_per_level;
+
+                    var bodyParts =
+                        bot?["Health"]?["BodyParts"] as JsonObject;
+
+                    if (bodyParts == null)
+                        continue;
+
+                    foreach (var part in bodyParts)
+                    {
+
+                        var health = part.Value?["Health"] as JsonObject;
+                        if (health == null)
+                            continue;
+
+                        double newMaxHealth = 0;
+                        switch (part.Key)
+                        {
+                            case "Head":
+                                newMaxHealth = AddHpPerLevel(increment, charType, null, base_health.head_health, increaseHealth.head_health);
+                                break;
+
+                            case "Chest":
+                                newMaxHealth = AddHpPerLevel(increment, charType, null, base_health.thorax_health, increaseHealth.thorax_health);
+                                break;
+
+                            case "Stomach":
+                                newMaxHealth = AddHpPerLevel(increment, charType, null, base_health.stomach_health, increaseHealth.stomach_health);
+                                break;
+
+                            case "LeftArm":
+                                newMaxHealth = AddHpPerLevel(increment, charType, null, base_health.left_arm_health, increaseHealth.left_arm_health);
+                                break;
+
+                            case "LeftLeg":
+                                newMaxHealth = AddHpPerLevel(increment, charType, null, base_health.left_leg_health, increaseHealth.left_leg_health);
+                                break;
+
+                            case "RightArm":
+                                newMaxHealth = AddHpPerLevel(increment, charType, null, base_health.right_arm_health, increaseHealth.right_arm_health);
+                                break;
+
+                            case "RightLeg":
+                                newMaxHealth = AddHpPerLevel(increment, charType, null, base_health.right_leg_health, increaseHealth.right_leg_health);
+                                break;
+                            default:
+                                break;
+                        }
+
+                        health["Maximum"] = newMaxHealth;
+                        health["Current"] = newMaxHealth;
+                    }
+                }
+
+                string outputJson = root.ToJsonString(
+                    new JsonSerializerOptions
+                    {
+                        WriteIndented = true
+                    }
+                );
+                return new ValueTask<string>(outputJson);
+            }
+            catch (Exception ex)
+            {
+
+                _logger.Error($"{ex}");
+            }
+
+            return new ValueTask<string>(output);
         }
 
         private void HpChanges()
