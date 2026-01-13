@@ -7,6 +7,7 @@ namespace HealthPerLevel_cs.config
         public bool enabled { get; set; }
         public PMC PMC { get; set; }
         public SCAV SCAV { get; set; }
+        public AI AI { get; set; }
     }
 
     public class PMC : ICharacter<Base_Health_PMC, Increase_Per_Level_PMC, Increase_Per_Health_Skill_Level_PMC>
