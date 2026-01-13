@@ -73,5 +73,16 @@
       "left_leg_health": 1,
       "right_leg_health": 1
     }
+  },
+  "AI": {
+    "enabled": true,
+    "pmc_bot_health": true,
+    "scav_bot_health": false,
+    "boss_bot_health": false,
+    "follower_bot_health": false,
+    "special_bot_health": false,
+    "raider_bot_health": false,
+    "cultist_bot_health": false,
+    "event_boss_health": false
   }
 }

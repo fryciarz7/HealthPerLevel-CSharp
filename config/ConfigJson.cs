@@ -102,4 +102,17 @@ namespace HealthPerLevel_cs.config
         public int left_leg_health { get; set; }
         public int right_leg_health { get; set; }
     }
+
+    public class AI
+    {
+        public bool enabled { get; set; }
+        public bool pmc_bot_health { get; set; }
+        public bool scav_bot_health { get; set; }
+        public bool boss_bot_health { get; set; }
+        public bool follower_bot_health { get; set; }
+        public bool special_bot_health { get; set; }
+        public bool raider_bot_health { get; set; }
+        public bool cultist_bot_health { get; set; }
+        public bool event_boss_health { get; set; }
+    }
 }
