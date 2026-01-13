@@ -78,3 +78,34 @@ public class HealthPerLevelOnUpdate : IOnUpdate
         return await Task.FromResult(true);
     }
 }
+
+[Injectable]
+public class BotHealthGenerateRoute(JsonUtil jsonUtil, BotHealthGenerateCallbacks callbacks) : StaticRouter(
+    jsonUtil, [
+        new RouteAction<GenerateBotsRequestData>(
+                "/client/game/bot/generate",
+                async (
+                    url,
+                    info,
+                    sessionId,
+                    output
+                ) => await callbacks.HandleGenerateBotsRoute(url, info, sessionId, output)
+                )
+        ]
+    )
+{ }
+
+
+
+/// <summary>
+/// This class handles callbacks that are sent to your route, you can run code both synchronously here as well as asynchronously
+/// </summary>
+[Injectable]
+public class BotHealthGenerateCallbacks(ISptLogger<BotHealthGenerateCallbacks> logger, ModHelper modHelper, HttpResponseUtil httpResponseUtil,
+        HealthPerLevel hpl)
+{
+    public ValueTask<string> HandleGenerateBotsRoute(string url, GenerateBotsRequestData info, MongoId sessionId, string? output)
+    {
+        return hpl.ModifyBotHealth(output);
+    }
+}
