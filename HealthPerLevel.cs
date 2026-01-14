@@ -100,7 +100,7 @@ namespace HealthPerLevel_cs
                         if (healthNode == null)
                             continue;
 
-                        double newMax = CalculateNewMaxHealth(part.Key, charType, increment);
+                        double newMax = CalculateBotNewMaxHealth(part.Key, charType, increment);
                         // Ensure values stored as JsonValue
                         healthNode["Maximum"] = JsonValue.Create(newMax);
                         healthNode["Current"] = JsonValue.Create(newMax);
@@ -178,7 +178,7 @@ namespace HealthPerLevel_cs
             return false;
         }
 
-        private double CalculateNewMaxHealth<T, E, G>(string partKey, ICharacter<T, E, G> charType, double increment)
+        private double CalculateBotNewMaxHealth<T, E, G>(string partKey, ICharacter<T, E, G> charType, double increment)
         {
             // Cast to IHealth for convenience
             IHealth baseHealth = charType.base_health as IHealth;
