@@ -39,16 +39,13 @@ namespace HealthPerLevel_cs
         public Task DoStuff(bool _isOnLoad)
         {
             isOnLoad = _isOnLoad;
-            if (_config.enabled)
-            {
-                HpChanges();
-            }
+            HpChanges();
             return Task.CompletedTask;
         }
 
         public ValueTask<string> ModifyBotHealth(string? output)
         {
-            if (_config.AI.enabled == false || string.IsNullOrWhiteSpace(output))
+            if (_config.enabled == false || _config.AI.enabled == false || string.IsNullOrWhiteSpace(output))
             {
                 return new ValueTask<string>(output ?? "");
             }
@@ -233,7 +230,14 @@ namespace HealthPerLevel_cs
             {
                 if (bodyPart != null && bodyPart.Health != null)
                 {
-                    ModifyHealth(accLv.Value, charType, healthSkill, bodyPartName, bodyPart);
+                    if (_config.enabled)
+                    {
+                        ModifyHealth(accLv.Value, charType, healthSkill, bodyPartName, bodyPart);
+                    }
+                    else
+                    {
+                        ModifyHealth(1, charType, 1, bodyPartName, bodyPart);
+                    }
                 }
             }
         }
