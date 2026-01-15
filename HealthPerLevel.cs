@@ -217,7 +217,7 @@ namespace HealthPerLevel_cs
                 {
                     SptProfile? profile = kvp.Value;
                     //_logger.Info($"{LogPrefix}Modifying health for profile: {profile?.ProfileInfo?.Username} with experience: {profile?.CharacterData?.PmcData?.Info?.Experience}");
-                    _logger.Info($"{LogPrefix}Modifying health for profile: {profile?.ProfileInfo?.Username})";
+                    _logger.Info($"{LogPrefix}Modifying health for profile: {profile?.ProfileInfo?.Username}");
                     if (profile?.CharacterData?.PmcData != null)
                     {
                         CalculateCharacterData(profile.CharacterData.PmcData, _config.PMC);
