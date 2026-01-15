@@ -1,6 +1,6 @@
 ﻿{
   "enabled": true,
-  "resotreDefaults": false,
+  "resotreDefaults": false, // this does not work currently
   "debug": true,
   "PMC": {
     "levels_per_increment": 5,
