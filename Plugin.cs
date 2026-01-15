@@ -3,6 +3,7 @@ using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Helpers;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Bot;
+using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Servers;
@@ -61,32 +62,32 @@ public class HealthPerLevelOnLoad : IOnLoad
     }
 }
 
-[Injectable(TypePriority = OnUpdateOrder.InsuranceCallbacks)]
-public class HealthPerLevelOnUpdate : IOnUpdate
-{
-    private readonly SaveServer _saveServer;
+//[Injectable(TypePriority = OnUpdateOrder.InsuranceCallbacks)]
+//public class HealthPerLevelOnUpdate : IOnUpdate
+//{
+//    private readonly SaveServer _saveServer;
 
-    private readonly HealthPerLevel _hpl;
+//    private readonly HealthPerLevel _hpl;
 
-    public HealthPerLevelOnUpdate(
-        SaveServer saveServer,
-        HealthPerLevel hpl)
-    {
-        this._saveServer = saveServer;
+//    public HealthPerLevelOnUpdate(
+//        SaveServer saveServer,
+//        HealthPerLevel hpl)
+//    {
+//        this._saveServer = saveServer;
 
-        _hpl = hpl;
-    }
+//        _hpl = hpl;
+//    }
 
-    public async Task<bool> OnUpdate(long secondsSinceLastRun)
-    {
-        await _saveServer.LoadAsync();
-        await _hpl.DoStuff(false);
-        return await Task.FromResult(true);
-    }
-}
+//    public async Task<bool> OnUpdate(long secondsSinceLastRun)
+//    {
+//        await _saveServer.LoadAsync();
+//        await _hpl.DoStuff(false);
+//        return await Task.FromResult(true);
+//    }
+//}
 
 [Injectable]
-public class BotHealthGenerateRoute(JsonUtil jsonUtil, BotHealthGenerateCallbacks callbacks) : StaticRouter(
+public class HealthChangesRoute(JsonUtil jsonUtil, HealthChangesCallbacks callbacks) : StaticRouter(
     jsonUtil, [
         new RouteAction<GenerateBotsRequestData>(
                 "/client/game/bot/generate",
@@ -96,7 +97,17 @@ public class BotHealthGenerateRoute(JsonUtil jsonUtil, BotHealthGenerateCallback
                     sessionId,
                     output
                 ) => await callbacks.HandleGenerateBotsRoute(url, info, sessionId, output)
-                )
+                ),
+        new RouteAction<EmptyRequestData>(
+            // "/client/game/start",
+            "/client/game/profile/select",
+            async(
+                url,
+                info,
+                sessionId,
+                output
+                ) => await callbacks.HandleGameStartRoute(url, info, sessionId, output)
+            )
         ]
     )
 { }
@@ -107,11 +118,16 @@ public class BotHealthGenerateRoute(JsonUtil jsonUtil, BotHealthGenerateCallback
 /// This class handles callbacks that are sent to your route, you can run code both synchronously here as well as asynchronously
 /// </summary>
 [Injectable]
-public class BotHealthGenerateCallbacks(ISptLogger<BotHealthGenerateCallbacks> logger, ModHelper modHelper, HttpResponseUtil httpResponseUtil,
+public class HealthChangesCallbacks(ISptLogger<HealthChangesCallbacks> logger, ModHelper modHelper, HttpResponseUtil httpResponseUtil,
         HealthPerLevel hpl)
 {
     public ValueTask<string> HandleGenerateBotsRoute(string url, GenerateBotsRequestData info, MongoId sessionId, string? output)
     {
         return hpl.ModifyBotHealth(output);
+    }
+    public ValueTask<string> HandleGameStartRoute(string url, EmptyRequestData info, MongoId sessionId, string? output)
+    {
+        hpl.DoStuff(false);
+        return ValueTask.FromResult(output);
     }
 }
