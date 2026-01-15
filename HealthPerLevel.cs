@@ -41,11 +41,12 @@ namespace HealthPerLevel_cs
             isOnLoad = _isOnLoad;
             if (_config.enabled)
             {
-            HpChanges();
+                HpChanges();
             }
             return Task.CompletedTask;
         }
 
+        #region Bot Health Modification
         public ValueTask<string> ModifyBotHealth(string? output)
         {
             if (_config.enabled == false || _config.AI.enabled == false || string.IsNullOrWhiteSpace(output))
@@ -118,6 +119,11 @@ namespace HealthPerLevel_cs
             catch (Exception ex)
             {
                 _logger.Error($"{LogPrefix}ModifyBotHealth failed: {ex}");
+                if (_config.debug)
+                {
+                    _logger.Error($"{LogPrefix}inner message: {ex?.InnerException?.Message ?? ""}");
+                    _logger.Error($"{LogPrefix}StackTrace: {ex?.StackTrace}");
+                }
                 return new ValueTask<string>(output ?? "");
             }
         }
@@ -199,16 +205,18 @@ namespace HealthPerLevel_cs
             };
         }
 
+        #endregion Bot Health Modification
+
         private void HpChanges()
         {
-            try
-            {
-                var profiles = _saveServer.GetProfiles();
+            var profiles = _saveServer.GetProfiles();
 
-                foreach (var kvp in profiles)
+            foreach (var kvp in profiles)
+            {
+                try
                 {
                     SptProfile? profile = kvp.Value;
-
+                    _logger.Info($"{LogPrefix}Modifying health for profile: {profile.ProfileInfo.Username}");
                     if (profile?.CharacterData?.PmcData != null)
                     {
                         CalculateCharacterData(profile.CharacterData.PmcData, _config.PMC);
@@ -218,28 +226,41 @@ namespace HealthPerLevel_cs
                         CalculateCharacterData(profile.CharacterData.ScavData, _config.SCAV);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error($"{LogPrefix}Error: {ex.Message}");
+                catch (Exception ex)
+                {
+                    _logger.Error($"{LogPrefix}Error: {ex.Message}");
+                    if (_config.debug)
+                    {
+                        _logger.Error($"{LogPrefix}inner message: {ex?.InnerException?.Message ?? ""}");
+                        _logger.Error($"{LogPrefix}StackTrace: {ex?.StackTrace}");
+                    }
+                }
             }
         }
 
         private void CalculateCharacterData<T, E, G>(PmcData character, ICharacter<T, E, G> charType)
         {
+            ValidateProfile(character, charType);
             double? accLv = CheckLevelCap(character, charType);
             double healthSkill = GetHealthLevel(character, charType);
             foreach (var (bodyPartName, bodyPart) in character.Health.BodyParts)
             {
                 if (bodyPart != null && bodyPart.Health != null)
                 {
-                        ModifyHealth(accLv.Value, charType, healthSkill, bodyPartName, bodyPart);
-                    }
-                    else // TODO: reset to default health values; relocation might be needed
-                    {
-                        ModifyHealth(1, charType, 1, bodyPartName, bodyPart);
-                    }
+                    ModifyHealth(accLv.Value, charType, healthSkill, bodyPartName, bodyPart);
                 }
+            }
+        }
+
+        private void ValidateProfile<T, E, G>(PmcData character, ICharacter<T, E, G> charType)
+        {
+            if (character.Info == null)
+            {
+                throw new Exception($"Character info is null. Expected if new profile.");
+            }
+            if (character.Health == null || character.Health.BodyParts == null)
+            {
+                throw new Exception($"Character health or body parts data is null.");
             }
         }
 
@@ -315,8 +336,15 @@ namespace HealthPerLevel_cs
 
         private static double GetHealthLevel<T, E, G>(PmcData character, ICharacter<T, E, G> charType)
         {
-            double hpSkillLv = character?.Skills?.Common.FirstOrDefault(a => a.Id == SkillTypes.Health)?.Progress ?? 0;
-            return charType.level_health_skill_cap ? Math.Min(hpSkillLv, charType.level_health_skill_cap_value) : hpSkillLv;
+            try
+            {
+                double hpSkillLv = character?.Skills?.Common.FirstOrDefault(a => a.Id == SkillTypes.Health)?.Progress ?? 0;
+                return charType.level_health_skill_cap ? Math.Min(hpSkillLv, charType.level_health_skill_cap_value) : hpSkillLv;
+            }
+            catch (Exception)
+            {
+                throw new Exception($"Health skill level missing.");
+            }
         }
 
         private int CheckLevelCap<T, E, G>(PmcData character, ICharacter<T, E, G> charType)

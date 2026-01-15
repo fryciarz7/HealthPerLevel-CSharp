@@ -5,6 +5,8 @@ namespace HealthPerLevel_cs.config
     public class ConfigJson
     {
         public bool enabled { get; set; }
+        public bool restoreDefaults { get; set; }
+        public bool debug { get; set; }
         public PMC PMC { get; set; }
         public SCAV SCAV { get; set; }
         public AI AI { get; set; }
