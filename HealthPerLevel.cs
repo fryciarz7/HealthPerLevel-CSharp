@@ -39,7 +39,10 @@ namespace HealthPerLevel_cs
         public Task DoStuff(bool _isOnLoad)
         {
             isOnLoad = _isOnLoad;
+            if (_config.enabled)
+            {
             HpChanges();
+            }
             return Task.CompletedTask;
         }
 
@@ -230,11 +233,9 @@ namespace HealthPerLevel_cs
             {
                 if (bodyPart != null && bodyPart.Health != null)
                 {
-                    if (_config.enabled)
-                    {
                         ModifyHealth(accLv.Value, charType, healthSkill, bodyPartName, bodyPart);
                     }
-                    else
+                    else // TODO: reset to default health values; relocation might be needed
                     {
                         ModifyHealth(1, charType, 1, bodyPartName, bodyPart);
                     }
