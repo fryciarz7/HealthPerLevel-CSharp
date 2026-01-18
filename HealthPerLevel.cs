@@ -39,7 +39,23 @@ namespace HealthPerLevel_cs
         public Task DoStuff(bool _isOnLoad)
         {
             isOnLoad = _isOnLoad;
-            if (_config.enabled)
+            if (_config.debug)
+            {
+                _logger.Info($"{LogPrefix}Executing DoStuff. isOnLoad: {isOnLoad}, enabled: {_config.enabled}, restoreDefaults: {_config.restoreDefaults}");
+                _logger.Info($"{LogPrefix}1 {(!_config.enabled || _config.restoreDefaults)}");
+                _logger.Info($"{LogPrefix}2 {(isOnLoad && (!_config.enabled || _config.restoreDefaults))}");
+                _logger.Debug($"{LogPrefix}WHY NO DEBUG LOGS");
+            }
+            if (!_config.enabled || _config.restoreDefaults)
+            {
+                if (isOnLoad)
+                {
+                    HpChanges(true);
+                    _logger.Warning($"{LogPrefix}Default health values have been restored. Please run the game to invoke server save.");
+                }
+                
+            }
+            else if (_config.enabled)
             {
                 HpChanges();
             }
@@ -207,7 +223,7 @@ namespace HealthPerLevel_cs
 
         #endregion Bot Health Modification
 
-        private void HpChanges()
+        private void HpChanges(bool restoreDefault = false)
         {
             var profiles = _saveServer.GetProfiles();
 
@@ -217,14 +233,14 @@ namespace HealthPerLevel_cs
                 {
                     SptProfile? profile = kvp.Value;
                     //_logger.Info($"{LogPrefix}Modifying health for profile: {profile?.ProfileInfo?.Username} with experience: {profile?.CharacterData?.PmcData?.Info?.Experience}");
-                    _logger.Info($"{LogPrefix}Modifying health for profile: {profile?.ProfileInfo?.Username}");
+                    _logger.Info($"{LogPrefix}{(restoreDefault ? "Restoring default" : "Modifying")} health for profile: {profile?.ProfileInfo?.Username}");
                     if (profile?.CharacterData?.PmcData != null)
                     {
-                        CalculateCharacterData(profile.CharacterData.PmcData, _config.PMC);
+                        CalculateCharacterData(profile.CharacterData.PmcData, _config.PMC, restoreDefault);
                     }
                     if (profile?.CharacterData?.ScavData != null)
                     {
-                        CalculateCharacterData(profile.CharacterData.ScavData, _config.SCAV);
+                        CalculateCharacterData(profile.CharacterData.ScavData, _config.SCAV, restoreDefault);
                     }
                 }
                 catch (Exception ex)
@@ -239,11 +255,16 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private void CalculateCharacterData<T, E, G>(PmcData character, ICharacter<T, E, G> charType)
+        private void CalculateCharacterData<T, E, G>(PmcData character, ICharacter<T, E, G> charType, bool restoreDefault)
         {
             ValidateProfile(character, charType);
-            double? accLv = CheckLevelCap(character, charType);
-            double healthSkill = GetHealthLevel(character, charType);
+            double? accLv = restoreDefault ? 0 : CheckLevelCap(character, charType);
+            double healthSkill = restoreDefault ? 0 : GetHealthLevel(character, charType);
+            if (_config.debug)
+            {
+                _logger.Info($"{LogPrefix}accLv: {accLv}");
+                _logger.Info($"{LogPrefix}healthSkill: {healthSkill}");
+            }
             foreach (var (bodyPartName, bodyPart) in character.Health.BodyParts)
             {
                 if (bodyPart != null && bodyPart.Health != null)
@@ -316,9 +337,12 @@ namespace HealthPerLevel_cs
                         _logger.Info($"{bodyPartName} is missing");
                         break;
                 }
-            //_logger.Info(LogPrefix + baseHealth.GetType().ToString());
             CheckIfTooMuchHealth(bodyPartName, bodyPart);
             ResetScavHealthOnLoad(bodyPart, baseHealth);
+            if (_config.debug)
+            {
+                _logger.Info(LogPrefix + $"BodyPart: {bodyPartName}, Health: ({bodyPart.Health.Current}/{bodyPart.Health.Maximum})");
+            }
 
             //_logger.Success($"{LogPrefix}Modified {bodyPartName} to {bodyPart.Health.Maximum}");
         }
@@ -365,7 +389,6 @@ namespace HealthPerLevel_cs
         {
             if (bodyPart.Health.Current > bodyPart.Health.Maximum)
             {
-                _logger.Warning($"{LogPrefix}How does your {bodyPartName} has more health than max? ({bodyPart.Health.Current}/{bodyPart.Health.Maximum}) Let me fix it...");
                 bodyPart.Health.Current = bodyPart.Health.Maximum;
             }
         }

@@ -29,63 +29,6 @@ public record ModMetadata : AbstractModMetadata
     public override string? License { get; init; } = "Creative Commons BY-NC-SA 3.0";
 }
 
-[Injectable(TypePriority = 400011)]
-public class HealthPerLevelOnLoad : IOnLoad
-{
-    private const string LogPrefix = "[HealthPerLevel] ";
-    private readonly ISptLogger<HealthPerLevelOnLoad> _logger;
-    private readonly DatabaseService _databaseService;
-
-    private readonly SaveServer _saveServer;
-
-    private readonly HealthPerLevel _hpl;
-
-    public HealthPerLevelOnLoad(
-        ISptLogger<HealthPerLevelOnLoad> logger,
-        DatabaseService databaseService,
-        SaveServer saveServer,
-        HealthPerLevel hpl)
-    {
-        this._logger = logger;
-        this._databaseService = databaseService;
-        this._saveServer = saveServer;
-
-        _hpl = hpl;
-    }
-
-    public async Task OnLoad()
-    {
-        await _saveServer.LoadAsync();
-        await _hpl.DoStuff(true);
-        _logger.Info($"{LogPrefix}Mod loaded...");
-        await Task.CompletedTask;
-    }
-}
-
-//[Injectable(TypePriority = OnUpdateOrder.InsuranceCallbacks)]
-//public class HealthPerLevelOnUpdate : IOnUpdate
-//{
-//    private readonly SaveServer _saveServer;
-
-//    private readonly HealthPerLevel _hpl;
-
-//    public HealthPerLevelOnUpdate(
-//        SaveServer saveServer,
-//        HealthPerLevel hpl)
-//    {
-//        this._saveServer = saveServer;
-
-//        _hpl = hpl;
-//    }
-
-//    public async Task<bool> OnUpdate(long secondsSinceLastRun)
-//    {
-//        await _saveServer.LoadAsync();
-//        await _hpl.DoStuff(false);
-//        return await Task.FromResult(true);
-//    }
-//}
-
 [Injectable]
 public class HealthChangesRoute(JsonUtil jsonUtil, HealthChangesCallbacks callbacks) : StaticRouter(
     jsonUtil, [
@@ -101,6 +44,15 @@ public class HealthChangesRoute(JsonUtil jsonUtil, HealthChangesCallbacks callba
         new RouteAction<EmptyRequestData>(
             // "/client/game/start",
             "/client/game/profile/select",
+            async(
+                url,
+                info,
+                sessionId,
+                output
+                ) => await callbacks.HandleProfileSelectRoute(url, info, sessionId, output)
+            ),
+        new RouteAction<EmptyRequestData>(
+            "/client/game/start",
             async(
                 url,
                 info,
@@ -125,9 +77,16 @@ public class HealthChangesCallbacks(ISptLogger<HealthChangesCallbacks> logger, M
     {
         return hpl.ModifyBotHealth(output);
     }
-    public ValueTask<string> HandleGameStartRoute(string url, EmptyRequestData info, MongoId sessionId, string? output)
+    public ValueTask<string> HandleProfileSelectRoute(string url, EmptyRequestData info, MongoId sessionId, string? output)
     {
         hpl.DoStuff(false);
+        return ValueTask.FromResult(output);
+    }
+
+    internal ValueTask<string> HandleGameStartRoute(string url, EmptyRequestData info, MongoId sessionId, string? output)
+    {
+        hpl.DoStuff(true);
+        logger.Info("[HealthPerLevel] Game started, health adjusted.");
         return ValueTask.FromResult(output);
     }
 }

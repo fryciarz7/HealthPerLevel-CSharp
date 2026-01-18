@@ -1,7 +1,7 @@
 ﻿{
   "enabled": true,
-  "resotreDefaults": false, // this does not work currently
-  "debug": false,
+  "restoreDefaults": true, // this does not work currently
+  "debug": true,
   "PMC": {
     "levels_per_increment": 5,
     "level_cap": false,
