@@ -232,14 +232,15 @@ namespace HealthPerLevel_cs
                 try
                 {
                     SptProfile? profile = kvp.Value;
-                    //_logger.Info($"{LogPrefix}Modifying health for profile: {profile?.ProfileInfo?.Username} with experience: {profile?.CharacterData?.PmcData?.Info?.Experience}");
                     _logger.Info($"{LogPrefix}{(restoreDefault ? "Restoring default" : "Modifying")} health for profile: {profile?.ProfileInfo?.Username}");
                     if (profile?.CharacterData?.PmcData != null)
                     {
+                        if (_config.debug) { _logger.Info($"{LogPrefix}PMC"); }
                         CalculateCharacterData(profile.CharacterData.PmcData, _config.PMC, restoreDefault);
                     }
                     if (profile?.CharacterData?.ScavData != null)
                     {
+                        if (_config.debug) { _logger.Info($"{LogPrefix}SCAV"); }
                         CalculateCharacterData(profile.CharacterData.ScavData, _config.SCAV, restoreDefault);
                     }
                 }
@@ -343,8 +344,6 @@ namespace HealthPerLevel_cs
             {
                 _logger.Info(LogPrefix + $"BodyPart: {bodyPartName}, Health: ({bodyPart.Health.Current}/{bodyPart.Health.Maximum})");
             }
-
-            //_logger.Success($"{LogPrefix}Modified {bodyPartName} to {bodyPart.Health.Maximum}");
         }
 
         private double AddHpPerLevel<T, E, G>(double inrement, ICharacter<T, E, G> charType, BodyPartHealth bodyPart, int baseHealth, int increaseHealth)
