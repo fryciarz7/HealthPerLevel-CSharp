@@ -325,9 +325,12 @@ namespace HealthPerLevel_cs
                         _logger.Info($"{bodyPartName} is missing");
                         break;
                 }
-            //_logger.Info(LogPrefix + baseHealth.GetType().ToString());
             CheckIfTooMuchHealth(bodyPartName, bodyPart);
             ResetScavHealthOnLoad(bodyPart, baseHealth);
+            if (_config.debug)
+            {
+                _logger.Info(LogPrefix + $"BodyPart: {bodyPartName}, Health: ({bodyPart.Health.Current}/{bodyPart.Health.Maximum})");
+            }
 
             //_logger.Success($"{LogPrefix}Modified {bodyPartName} to {bodyPart.Health.Maximum}");
         }
