@@ -369,7 +369,6 @@ namespace HealthPerLevel_cs
         {
             if (bodyPart.Health.Current > bodyPart.Health.Maximum)
             {
-                _logger.Warning($"{LogPrefix}How does your {bodyPartName} has more health than max? ({bodyPart.Health.Current}/{bodyPart.Health.Maximum}) Let me fix it...");
                 bodyPart.Health.Current = bodyPart.Health.Maximum;
             }
         }
