@@ -207,7 +207,7 @@ namespace HealthPerLevel_cs
 
         #endregion Bot Health Modification
 
-        private void HpChanges()
+        private void HpChanges(bool restoreDefault = false)
         {
             var profiles = _saveServer.GetProfiles();
 
