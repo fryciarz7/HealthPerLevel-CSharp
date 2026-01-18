@@ -246,8 +246,13 @@ namespace HealthPerLevel_cs
         private void CalculateCharacterData<T, E, G>(PmcData character, ICharacter<T, E, G> charType, bool restoreDefault)
         {
             ValidateProfile(character, charType);
-            double? accLv = restoreDefault ? 1 : CheckLevelCap(character, charType);
-            double healthSkill = restoreDefault ? 1 : GetHealthLevel(character, charType);
+            double? accLv = restoreDefault ? 0 : CheckLevelCap(character, charType);
+            double healthSkill = restoreDefault ? 0 : GetHealthLevel(character, charType);
+            if (_config.debug)
+            {
+                _logger.Info($"{LogPrefix}accLv: {accLv}");
+                _logger.Info($"{LogPrefix}healthSkill: {healthSkill}");
+            }
             foreach (var (bodyPartName, bodyPart) in character.Health.BodyParts)
             {
                 if (bodyPart != null && bodyPart.Health != null)
