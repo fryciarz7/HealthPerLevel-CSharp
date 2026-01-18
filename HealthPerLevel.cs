@@ -239,7 +239,7 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private void CalculateCharacterData<T, E, G>(PmcData character, ICharacter<T, E, G> charType)
+        private void CalculateCharacterData<T, E, G>(PmcData character, ICharacter<T, E, G> charType, bool restoreDefault)
         {
             ValidateProfile(character, charType);
             double? accLv = CheckLevelCap(character, charType);
