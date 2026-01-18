@@ -220,11 +220,11 @@ namespace HealthPerLevel_cs
                     _logger.Info($"{LogPrefix}Modifying health for profile: {profile?.ProfileInfo?.Username}");
                     if (profile?.CharacterData?.PmcData != null)
                     {
-                        CalculateCharacterData(profile.CharacterData.PmcData, _config.PMC);
+                        CalculateCharacterData(profile.CharacterData.PmcData, _config.PMC, restoreDefault);
                     }
                     if (profile?.CharacterData?.ScavData != null)
                     {
-                        CalculateCharacterData(profile.CharacterData.ScavData, _config.SCAV);
+                        CalculateCharacterData(profile.CharacterData.ScavData, _config.SCAV, restoreDefault);
                     }
                 }
                 catch (Exception ex)
