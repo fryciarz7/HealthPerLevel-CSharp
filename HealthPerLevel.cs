@@ -46,9 +46,18 @@ namespace HealthPerLevel_cs
                 _logger.Info($"{LogPrefix}2 {(isOnLoad && (!_config.enabled || _config.restoreDefaults))}");
                 _logger.Debug($"{LogPrefix}WHY NO DEBUG LOGS");
             }
-            if (isOnLoad && (!_config.enabled || _config.restoreDefaults))
+            if (!_config.enabled || _config.restoreDefaults)
             {
-                HpChanges(true);
+                if (isOnLoad)
+                {
+                    HpChanges(true);
+                    _logger.Warning($"{LogPrefix}Default health values have been restored. Please run the game to invoke server save.");
+                }
+                
+            }
+            else if (_config.enabled)
+            {
+                HpChanges();
             }
             return Task.CompletedTask;
         }
