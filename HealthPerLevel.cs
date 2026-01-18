@@ -39,9 +39,12 @@ namespace HealthPerLevel_cs
         public Task DoStuff(bool _isOnLoad)
         {
             isOnLoad = _isOnLoad;
-            if (_config.enabled)
+            if (_config.debug)
             {
-                HpChanges();
+                _logger.Info($"{LogPrefix}Executing DoStuff. isOnLoad: {isOnLoad}, enabled: {_config.enabled}, restoreDefaults: {_config.restoreDefaults}");
+                _logger.Info($"{LogPrefix}1 {(!_config.enabled || _config.restoreDefaults)}");
+                _logger.Info($"{LogPrefix}2 {(isOnLoad && (!_config.enabled || _config.restoreDefaults))}");
+                _logger.Debug($"{LogPrefix}WHY NO DEBUG LOGS");
             }
             if (isOnLoad && (!_config.enabled || _config.restoreDefaults))
             {
