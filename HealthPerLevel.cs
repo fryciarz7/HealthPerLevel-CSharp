@@ -43,6 +43,10 @@ namespace HealthPerLevel_cs
             {
                 HpChanges();
             }
+            if (isOnLoad && (!_config.enabled || _config.restoreDefaults))
+            {
+                HpChanges(true);
+            }
             return Task.CompletedTask;
         }
 
