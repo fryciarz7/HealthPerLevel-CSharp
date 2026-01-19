@@ -295,49 +295,47 @@ namespace HealthPerLevel_cs
 
             double increment = GetIncrement(accLv, charType);
 
-            if (charType.health_per_health_skill_level)
+            switch (bodyPartName)
+            {
+                case "Head":
+                    bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.head_health, increaseHealth.head_health) +
+                        AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.head_health);
+                    break;
 
-                switch (bodyPartName)
-                {
-                    case "Head":
-                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.head_health, increaseHealth.head_health) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.head_health);
-                        break;
+                case "Chest":
+                    bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.thorax_health, increaseHealth.thorax_health) +
+                        AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.thorax_health);
+                    break;
 
-                    case "Chest":
-                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.thorax_health, increaseHealth.thorax_health) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.thorax_health);
-                        break;
+                case "Stomach":
+                    bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.stomach_health, increaseHealth.stomach_health) +
+                        AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.stomach_health);
+                    break;
 
-                    case "Stomach":
-                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.stomach_health, increaseHealth.stomach_health) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.stomach_health);
-                        break;
+                case "LeftArm":
+                    bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.left_arm_health, increaseHealth.left_arm_health) +
+                        AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.left_arm_health);
+                    break;
 
-                    case "LeftArm":
-                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.left_arm_health, increaseHealth.left_arm_health) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.left_arm_health);
-                        break;
+                case "LeftLeg":
+                    bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.left_leg_health, increaseHealth.left_leg_health) +
+                        AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.left_leg_health);
+                    break;
 
-                    case "LeftLeg":
-                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.left_leg_health, increaseHealth.left_leg_health) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.left_leg_health);
-                        break;
+                case "RightArm":
+                    bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.right_arm_health, increaseHealth.right_arm_health) +
+                        AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.right_arm_health);
+                    break;
 
-                    case "RightArm":
-                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.right_arm_health, increaseHealth.right_arm_health) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.right_arm_health);
-                        break;
+                case "RightLeg":
+                    bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.right_leg_health, increaseHealth.right_leg_health) +
+                        AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.right_leg_health);
+                    break;
 
-                    case "RightLeg":
-                        bodyPart.Health.Maximum = AddHpPerLevel(increment, charType, bodyPart, baseHealth.right_leg_health, increaseHealth.right_leg_health) +
-                            AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHealthSkill.right_leg_health);
-                        break;
-
-                    default:
-                        _logger.Info($"{bodyPartName} is missing");
-                        break;
-                }
+                default:
+                    _logger.Info($"{bodyPartName} is missing");
+                    break;
+            }
             CheckIfTooMuchHealth(bodyPartName, bodyPart);
             ResetScavHealthOnLoad(bodyPart, baseHealth);
             if (_config.debug)
