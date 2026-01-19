@@ -28,35 +28,35 @@ namespace HealthPerLevel_cs.config
 
     public class Base_Health_PMC : IHealth
     {
-        public int thorax_health { get; set; }
-        public int stomach_health { get; set; }
-        public int head_health { get; set; }
-        public int left_arm_health { get; set; }
-        public int right_arm_health { get; set; }
-        public int left_leg_health { get; set; }
-        public int right_leg_health { get; set; }
+        public float thorax_health { get; set; }
+        public float stomach_health { get; set; }
+        public float head_health { get; set; }
+        public float left_arm_health { get; set; }
+        public float right_arm_health { get; set; }
+        public float left_leg_health { get; set; }
+        public float right_leg_health { get; set; }
     }
 
     public class Increase_Per_Level_PMC : IHealth
     {
-        public int thorax_health { get; set; }
-        public int stomach_health { get; set; }
-        public int head_health { get; set; }
-        public int left_arm_health { get; set; }
-        public int right_arm_health { get; set; }
-        public int left_leg_health { get; set; }
-        public int right_leg_health { get; set; }
+        public float thorax_health { get; set; }
+        public float stomach_health { get; set; }
+        public float head_health { get; set; }
+        public float left_arm_health { get; set; }
+        public float right_arm_health { get; set; }
+        public float left_leg_health { get; set; }
+        public float right_leg_health { get; set; }
     }
 
     public class Increase_Per_Health_Skill_Level_PMC : IHealth
     {
-        public int thorax_health { get; set; }
-        public int stomach_health { get; set; }
-        public int head_health { get; set; }
-        public int left_arm_health { get; set; }
-        public int right_arm_health { get; set; }
-        public int left_leg_health { get; set; }
-        public int right_leg_health { get; set; }
+        public float thorax_health { get; set; }
+        public float stomach_health { get; set; }
+        public float head_health { get; set; }
+        public float left_arm_health { get; set; }
+        public float right_arm_health { get; set; }
+        public float left_leg_health { get; set; }
+        public float right_leg_health { get; set; }
     }
 
     public class SCAV : ICharacter<Base_Health_SCAV, Increase_Per_Level_SCAV, Increase_Per_Health_Skill_Level_SCAV>
@@ -75,35 +75,35 @@ namespace HealthPerLevel_cs.config
 
     public class Base_Health_SCAV : IHealth
     {
-        public int thorax_health { get; set; }
-        public int stomach_health { get; set; }
-        public int head_health { get; set; }
-        public int left_arm_health { get; set; }
-        public int right_arm_health { get; set; }
-        public int left_leg_health { get; set; }
-        public int right_leg_health { get; set; }
+        public float thorax_health { get; set; }
+        public float stomach_health { get; set; }
+        public float head_health { get; set; }
+        public float left_arm_health { get; set; }
+        public float right_arm_health { get; set; }
+        public float left_leg_health { get; set; }
+        public float right_leg_health { get; set; }
     }
 
     public class Increase_Per_Level_SCAV : IHealth
     {
-        public int thorax_health { get; set; }
-        public int stomach_health { get; set; }
-        public int head_health { get; set; }
-        public int left_arm_health { get; set; }
-        public int right_arm_health { get; set; }
-        public int left_leg_health { get; set; }
-        public int right_leg_health { get; set; }
+        public float thorax_health { get; set; }
+        public float stomach_health { get; set; }
+        public float head_health { get; set; }
+        public float left_arm_health { get; set; }
+        public float right_arm_health { get; set; }
+        public float left_leg_health { get; set; }
+        public float right_leg_health { get; set; }
     }
 
     public class Increase_Per_Health_Skill_Level_SCAV : IHealth
     {
-        public int thorax_health { get; set; }
-        public int stomach_health { get; set; }
-        public int head_health { get; set; }
-        public int left_arm_health { get; set; }
-        public int right_arm_health { get; set; }
-        public int left_leg_health { get; set; }
-        public int right_leg_health { get; set; }
+        public float thorax_health { get; set; }
+        public float stomach_health { get; set; }
+        public float head_health { get; set; }
+        public float left_arm_health { get; set; }
+        public float right_arm_health { get; set; }
+        public float left_leg_health { get; set; }
+        public float right_leg_health { get; set; }
     }
 
     public class AI
