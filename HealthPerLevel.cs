@@ -345,7 +345,7 @@ namespace HealthPerLevel_cs
 
                 default:
                     _logger.Info($"{bodyPartName} is missing");
-                    break;
+                    return;
             }
             bodyPart.Health.Maximum = Math.Floor(AddHpPerLevel(increment, charType, bodyPart, bodyBaseHp, increasePerLevel) +
                         AddHpPerSkillLevel(charType, hpSkillv, bodyPart, increasePerHpSkill));
