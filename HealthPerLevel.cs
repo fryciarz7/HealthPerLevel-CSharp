@@ -346,12 +346,12 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private double AddHpPerLevel<T, E, G>(double inrement, ICharacter<T, E, G> charType, BodyPartHealth bodyPart, int baseHealth, int increaseHealth)
+        private double AddHpPerLevel<T, E, G>(double inrement, ICharacter<T, E, G> charType, BodyPartHealth bodyPart, float baseHealth, float increaseHealth)
         {
             return baseHealth + (inrement * increaseHealth);
         }
 
-        private double AddHpPerSkillLevel<T, E, G>(ICharacter<T, E, G> charType, double hpSkillv, BodyPartHealth bodyPart, int increasePerHealthSkill)
+        private double AddHpPerSkillLevel<T, E, G>(ICharacter<T, E, G> charType, double hpSkillv, BodyPartHealth bodyPart, float increasePerHealthSkill)
         {
             return charType.health_per_health_skill_level ?
                 Math.Floor(hpSkillv / 100 / charType.health_skill_levels_per_increment) * increasePerHealthSkill :
