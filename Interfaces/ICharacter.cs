@@ -17,6 +17,5 @@
         public bool metabolism_skill_cap { get; set; }
         public int metabolism_skill_cap_value { get; set; }
         public IMetabolism metabolism { get; set; }
-        public IMetabolism metabolism_per_skill { get; set; }
     }
 }
