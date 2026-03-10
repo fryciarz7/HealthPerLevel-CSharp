@@ -24,6 +24,8 @@ namespace HealthPerLevel_cs.config
         public int level_health_skill_cap_value { get; set; }
         public bool health_per_health_skill_level { get; set; }
         public Increase_Per_Health_Skill_Level_PMC increase_per_health_skill_level { get; set; }
+        public bool modify_energy_and_hydration { get; set; }
+        public int metabolism_skill_levels_per_increment { get; set; }
     }
 
     public class Base_Health_PMC : IHealth
@@ -71,6 +73,8 @@ namespace HealthPerLevel_cs.config
         public int level_health_skill_cap_value { get; set; }
         public bool health_per_health_skill_level { get; set; }
         public Increase_Per_Health_Skill_Level_SCAV increase_per_health_skill_level { get; set; }
+        public bool modify_energy_and_hydration { get; set; }
+        public int metabolism_skill_levels_per_increment { get; set; }
     }
 
     public class Base_Health_SCAV : IHealth
