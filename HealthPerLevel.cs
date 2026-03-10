@@ -273,6 +273,15 @@ namespace HealthPerLevel_cs
                     ModifyHealth(accLv.Value, charType, healthSkill, bodyPartName, bodyPart);
                 }
             }
+            if (_config.PMC.modify_energy_and_hydration)
+            {
+                ModyfyMetabolism();
+            }
+        }
+
+        private void ModyfyMetabolism()
+        {
+            throw new NotImplementedException();
         }
 
         private void ValidateProfile<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType)
