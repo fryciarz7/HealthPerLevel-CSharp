@@ -12,7 +12,7 @@ namespace HealthPerLevel_cs.config
         public AI AI { get; set; }
     }
 
-    public class PMC : ICharacter<Base_Health_PMC, Increase_Per_Level_PMC, Increase_Per_Health_Skill_Level_PMC>
+    public class PMC : ICharacter<Base_Health_PMC, Increase_Per_Level_PMC, Increase_Per_Health_Skill_Level_PMC, Metabolism_PMC>
     {
         public int levels_per_increment { get; set; }
         public bool level_cap { get; set; }
@@ -26,6 +26,13 @@ namespace HealthPerLevel_cs.config
         public Increase_Per_Health_Skill_Level_PMC increase_per_health_skill_level { get; set; }
         public bool modify_energy_and_hydration { get; set; }
         public int metabolism_skill_levels_per_increment { get; set; }
+        public Metabolism_PMC metabolism { get; set; }
+    }
+
+    public class Metabolism_PMC : IMetabolism
+    {
+        public float energy { get; set; }
+        public float hydration { get; set; }
     }
 
     public class Base_Health_PMC : IHealth
@@ -61,7 +68,7 @@ namespace HealthPerLevel_cs.config
         public float right_leg_health { get; set; }
     }
 
-    public class SCAV : ICharacter<Base_Health_SCAV, Increase_Per_Level_SCAV, Increase_Per_Health_Skill_Level_SCAV>
+    public class SCAV : ICharacter<Base_Health_SCAV, Increase_Per_Level_SCAV, Increase_Per_Health_Skill_Level_SCAV, Metabolism_SCAV>
     {
         public int levels_per_increment { get; set; }
         public bool level_cap { get; set; }
@@ -75,6 +82,13 @@ namespace HealthPerLevel_cs.config
         public Increase_Per_Health_Skill_Level_SCAV increase_per_health_skill_level { get; set; }
         public bool modify_energy_and_hydration { get; set; }
         public int metabolism_skill_levels_per_increment { get; set; }
+        public Metabolism_SCAV metabolism { get; set; }
+    }
+
+    public class Metabolism_SCAV : IMetabolism
+    {
+        public float energy { get; set; }
+        public float hydration { get; set; }
     }
 
     public class Base_Health_SCAV : IHealth

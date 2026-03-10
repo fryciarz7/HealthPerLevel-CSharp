@@ -11,6 +11,10 @@
     "level_health_skill_cap_value": 25,
     "modify_energy_and_hydration": true,
     "metabolism_skill_levels_per_increment": 1,
+    "metabolism": {
+      "energy": 1,
+      "hydration": 1
+    },
 
     "base_health": {
       "thorax_health": 85,
@@ -50,6 +54,10 @@
     "level_health_skill_cap_value": 25,
     "modify_energy_and_hydration": true,
     "metabolism_skill_levels_per_increment": 1,
+    "metabolism": {
+      "energy": 1,
+      "hydration": 1
+    },
 
     "base_health": {
       "thorax_health": 85,
