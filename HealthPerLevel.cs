@@ -6,6 +6,7 @@ using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Eft.Profile;
 using SPTarkov.Server.Core.Models.Enums;
+using SPTarkov.Server.Core.Models.Enums.Hideout;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Servers;
 using System.Reflection;
@@ -294,11 +295,34 @@ namespace HealthPerLevel_cs
 
         private void ModyfyMetabolism<T, E, G, H>(double accLv, PmcData character, ICharacter<T, E, G, H> charType)
         {
-            IMetabolism metabolism = charType.metabolism as IMetabolism;
-            double increment = GetIncrement(accLv, charType);
+            IMetabolism metabolismPerSkill = charType.metabolism_per_skill as IMetabolism;
             double metabolismSkill = GetMetabolismLevel(character, charType);
-            character.Health.Hydration.Maximum = Math.Floor(100 + (increment * metabolism.hydration));
-            character.Health.Energy.Maximum = Math.Floor(100 + (increment * metabolism.energy));
+
+            int? restSpaceLevel = 0;
+            double maxEnergy = 100;
+            if (_config.debug)
+            {
+                _logger.Info($"{LogPrefix}ModyfyMetabolism: charType is {charType.GetType()}");
+            }
+            if (charType is PMC)
+            { 
+                restSpaceLevel = character.Hideout.Areas.Where(a => a.Type == HideoutAreas.RestSpace).Select(a => a.Level).FirstOrDefault();
+                maxEnergy = restSpaceLevel == 3 ? 110 : 100;
+            }
+            if (_config.debug)
+            {
+                _logger.Info($"{LogPrefix}Calculating metabolism. metabolismSkill: {metabolismSkill}");
+            }
+
+            character.Health.Hydration.Maximum = 100 + CalculateMetabolismPerSkill(charType, metabolismSkill, metabolismPerSkill.hydration);
+            character.Health.Energy.Maximum = maxEnergy + CalculateMetabolismPerSkill(charType, metabolismSkill, metabolismPerSkill.energy);
+        }
+
+        private double CalculateMetabolismPerSkill<T, E, G, H>(ICharacter<T, E, G, H> charType, double metabolismSkill, float skillBonus)
+        {
+            return charType.metabolism_per_skill != null ?
+                Math.Floor(metabolismSkill / 100 / charType.metabolism_skill_levels_per_increment) * skillBonus :
+                0;
         }
 
         private void ValidateProfile<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType)
