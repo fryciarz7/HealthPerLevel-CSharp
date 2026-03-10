@@ -1,6 +1,6 @@
 ﻿namespace HealthPerLevel_cs.Interfaces
 {
-    public interface ICharacter<TBaseHealth, TIncreasePerLevel, TIncreasePerHealthSkillLevel>// where TBaseHealth : IHealth
+    public interface ICharacter<TBaseHealth, TIncreasePerLevel, TIncreasePerHealthSkillLevel, IMetabolism>// where TBaseHealth : IHealth
     {
         public int levels_per_increment { get; set; }
         public bool level_cap { get; set; }
@@ -12,5 +12,6 @@
         public TIncreasePerLevel increase_per_level { get; set; }
         public bool health_per_health_skill_level { get; set; }
         public TIncreasePerHealthSkillLevel increase_per_health_skill_level { get; set; }
+        public IMetabolism metabolism { get; set; }
     }
 }

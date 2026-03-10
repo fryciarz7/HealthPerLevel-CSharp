@@ -200,7 +200,7 @@ namespace HealthPerLevel_cs
             return false;
         }
 
-        private double CalculateBotNewMaxHealth<T, E, G>(string partKey, ICharacter<T, E, G> charType, double increment)
+        private double CalculateBotNewMaxHealth<T, E, G, H>(string partKey, ICharacter<T, E, G, H> charType, double increment)
         {
             // Cast to IHealth for convenience
             IHealth baseHealth = charType.base_health as IHealth;
@@ -256,7 +256,7 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private void CalculateCharacterData<T, E, G>(PmcData character, ICharacter<T, E, G> charType, bool restoreDefault)
+        private void CalculateCharacterData<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType, bool restoreDefault)
         {
             ValidateProfile(character, charType);
             double? accLv = restoreDefault ? 0 : CheckLevelCap(character, charType);
@@ -275,7 +275,7 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private void ValidateProfile<T, E, G>(PmcData character, ICharacter<T, E, G> charType)
+        private void ValidateProfile<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType)
         {
             if (character.Info == null)
             {
@@ -287,7 +287,7 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private void ModifyHealth<T, E, G>(double accLv, ICharacter<T, E, G> charType, double hpSkillv, string bodyPartName, BodyPartHealth bodyPart)
+        private void ModifyHealth<T, E, G, H>(double accLv, ICharacter<T, E, G, H> charType, double hpSkillv, string bodyPartName, BodyPartHealth bodyPart)
         {
             IHealth baseHealth = charType.base_health as IHealth;
             IHealth increaseHealth = charType.increase_per_level as IHealth;
@@ -357,19 +357,19 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private double AddHpPerLevel<T, E, G>(double inrement, ICharacter<T, E, G> charType, BodyPartHealth bodyPart, float baseHealth, float increaseHealth)
+        private double AddHpPerLevel<T, E, G, H>(double inrement, ICharacter<T, E, G, H> charType, BodyPartHealth bodyPart, float baseHealth, float increaseHealth)
         {
             return baseHealth + (inrement * increaseHealth);
         }
 
-        private double AddHpPerSkillLevel<T, E, G>(ICharacter<T, E, G> charType, double hpSkillv, BodyPartHealth bodyPart, float increasePerHealthSkill)
+        private double AddHpPerSkillLevel<T, E, G, H>(ICharacter<T, E, G, H> charType, double hpSkillv, BodyPartHealth bodyPart, float increasePerHealthSkill)
         {
             return charType.health_per_health_skill_level ?
                 Math.Floor(hpSkillv / 100 / charType.health_skill_levels_per_increment) * increasePerHealthSkill :
                 0;
         }
 
-        private static double GetHealthLevel<T, E, G>(PmcData character, ICharacter<T, E, G> charType)
+        private static double GetHealthLevel<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType)
         {
             try
             {
@@ -382,7 +382,7 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private int CheckLevelCap<T, E, G>(PmcData character, ICharacter<T, E, G> charType)
+        private int CheckLevelCap<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType)
         {
             return charType.level_cap ? Math.Min(character.Info.Level.Value, charType.level_cap_value) : character.Info.Level.Value;
         }
@@ -403,7 +403,7 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private double GetIncrement<T, E, G>(double accountLevel, ICharacter<T, E, G> charType)
+        private double GetIncrement<T, E, G, H>(double accountLevel, ICharacter<T, E, G, H> charType)
         {
             return Math.Truncate((accountLevel) / (double)charType.levels_per_increment);
         }
