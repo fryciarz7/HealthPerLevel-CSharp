@@ -275,7 +275,6 @@ namespace HealthPerLevel_cs
             }
             if (_config.PMC.modify_energy_and_hydration)
             {
-                double metabolismSkill = GetMetabolismLevel(character, charType);
                 ModyfyMetabolism(accLv.Value, character, charType);
             }
         }
@@ -297,6 +296,7 @@ namespace HealthPerLevel_cs
         {
             IMetabolism metabolism = charType.metabolism as IMetabolism;
             double increment = GetIncrement(accLv, charType);
+            double metabolismSkill = GetMetabolismLevel(character, charType);
             character.Health.Hydration.Maximum = Math.Floor(100 + (increment * metabolism.hydration));
             character.Health.Energy.Maximum = Math.Floor(100 + (increment * metabolism.energy));
         }
