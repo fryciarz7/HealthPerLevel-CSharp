@@ -415,7 +415,7 @@ namespace HealthPerLevel_cs
 
         private void ResetScavHealthOnLoad(BodyPartHealth bodyPart, IHealth baseHealth)
         {
-            if (baseHealth is Base_Health_SCAV && isOnLoad)
+            if (baseHealth is config.BodyHealth && isOnLoad)
             {
                 bodyPart.Health.Current = bodyPart.Health.Maximum;
             }
