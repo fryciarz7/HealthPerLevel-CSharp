@@ -289,7 +289,7 @@ namespace HealthPerLevel_cs
             }
             catch (Exception)
             {
-                throw new Exception($"Health skill level missing.");
+                throw new Exception($"Metabolism skill level missing.");
             }
         }
 
