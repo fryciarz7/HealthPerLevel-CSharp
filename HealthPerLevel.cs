@@ -275,11 +275,12 @@ namespace HealthPerLevel_cs
             }
             if (_config.PMC.modify_energy_and_hydration)
             {
-                ModyfyMetabolism(accLv.Value, character);
+                double metabolismSkill = GetMetabolismLevel(character, charType);
+                ModyfyMetabolism(accLv.Value, character, charType);
             }
         }
 
-        private void ModyfyMetabolism(double accLv, PmcData character)
+        private double GetMetabolismLevel<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType)
         {
             throw new NotImplementedException();
         }
