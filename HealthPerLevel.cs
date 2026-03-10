@@ -282,7 +282,15 @@ namespace HealthPerLevel_cs
 
         private double GetMetabolismLevel<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType)
         {
-            throw new NotImplementedException();
+            try
+            {
+                double metabSkillLv = character?.Skills?.Common.FirstOrDefault(a => a.Id == SkillTypes.Metabolism)?.Progress ?? 0;
+                return charType.metabolism_skill_cap ? Math.Min(metabSkillLv, charType.metabolism_skill_cap_value) : metabSkillLv;
+            }
+            catch (Exception)
+            {
+                throw new Exception($"Health skill level missing.");
+            }
         }
 
         private void ModyfyMetabolism<T, E, G, H>(double accLv, PmcData character, ICharacter<T, E, G, H> charType)
