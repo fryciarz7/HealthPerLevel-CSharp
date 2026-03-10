@@ -46,7 +46,6 @@ namespace HealthPerLevel_cs.config
         public int metabolism_skill_levels_per_increment { get; set; }
         public bool metabolism_skill_cap { get; set; }
         public int metabolism_skill_cap_value { get; set; }
-        public Metabolism metabolism { get; set; }
         public Metabolism metabolism_per_skill { get; set; }
     }
 
@@ -66,7 +65,6 @@ namespace HealthPerLevel_cs.config
         public int metabolism_skill_levels_per_increment { get; set; }
         public bool metabolism_skill_cap { get; set; }
         public int metabolism_skill_cap_value { get; set; }
-        public Metabolism metabolism { get; set; }
         public Metabolism metabolism_per_skill { get; set; }
     }
 
