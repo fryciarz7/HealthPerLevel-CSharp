@@ -284,6 +284,14 @@ namespace HealthPerLevel_cs
             throw new NotImplementedException();
         }
 
+        private void ModyfyMetabolism<T, E, G, H>(double accLv, PmcData character, ICharacter<T, E, G, H> charType)
+        {
+            IMetabolism metabolism = charType.metabolism as IMetabolism;
+            double increment = GetIncrement(accLv, charType);
+            character.Health.Hydration.Maximum = Math.Floor(100 + (increment * metabolism.hydration));
+            character.Health.Energy.Maximum = Math.Floor(100 + (increment * metabolism.energy));
+        }
+
         private void ValidateProfile<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType)
         {
             if (character.Info == null)
