@@ -13,7 +13,7 @@
     "metabolism_skill_levels_per_increment": 1,
     "metabolism_skill_cap": false,
     "metabolism_skill_cap_value": 30,
-    "metabolism": {
+    "metabolism_per_skill": {
       "energy": 1,
       "hydration": 1
     },
@@ -58,7 +58,7 @@
     "metabolism_skill_levels_per_increment": 1,
     "metabolism_skill_cap": false,
     "metabolism_skill_cap_value": 30,
-    "metabolism": {
+    "metabolism_per_skill": {
       "energy": 1,
       "hydration": 1
     },
