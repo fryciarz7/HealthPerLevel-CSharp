@@ -9,6 +9,14 @@
     "health_skill_levels_per_increment": 1,
     "level_health_skill_cap": false,
     "level_health_skill_cap_value": 25,
+    "modify_energy_and_hydration": true,
+    "metabolism_skill_levels_per_increment": 1,
+    "metabolism_skill_cap": false,
+    "metabolism_skill_cap_value": 30,
+    "metabolism_per_skill": {
+      "energy": 1,
+      "hydration": 1
+    },
 
     "base_health": {
       "thorax_health": 85,
@@ -46,6 +54,14 @@
     "health_skill_levels_per_increment": 1,
     "level_health_skill_cap": false,
     "level_health_skill_cap_value": 25,
+    "modify_energy_and_hydration": true,
+    "metabolism_skill_levels_per_increment": 1,
+    "metabolism_skill_cap": false,
+    "metabolism_skill_cap_value": 30,
+    "metabolism_per_skill": {
+      "energy": 1,
+      "hydration": 1
+    },
 
     "base_health": {
       "thorax_health": 85,

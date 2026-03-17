@@ -6,6 +6,7 @@ using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Eft.Profile;
 using SPTarkov.Server.Core.Models.Enums;
+using SPTarkov.Server.Core.Models.Enums.Hideout;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Servers;
 using System.Reflection;
@@ -200,7 +201,7 @@ namespace HealthPerLevel_cs
             return false;
         }
 
-        private double CalculateBotNewMaxHealth<T, E, G>(string partKey, ICharacter<T, E, G> charType, double increment)
+        private double CalculateBotNewMaxHealth<T, E, G, H>(string partKey, ICharacter<T, E, G, H> charType, double increment)
         {
             // Cast to IHealth for convenience
             IHealth baseHealth = charType.base_health as IHealth;
@@ -256,7 +257,7 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private void CalculateCharacterData<T, E, G>(PmcData character, ICharacter<T, E, G> charType, bool restoreDefault)
+        private void CalculateCharacterData<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType, bool restoreDefault)
         {
             ValidateProfile(character, charType);
             double? accLv = restoreDefault ? 0 : CheckLevelCap(character, charType);
@@ -273,9 +274,58 @@ namespace HealthPerLevel_cs
                     ModifyHealth(accLv.Value, charType, healthSkill, bodyPartName, bodyPart);
                 }
             }
+            if (_config.PMC.modify_energy_and_hydration)
+            {
+                ModyfyMetabolism(accLv.Value, character, charType);
+            }
         }
 
-        private void ValidateProfile<T, E, G>(PmcData character, ICharacter<T, E, G> charType)
+        private double GetMetabolismLevel<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType)
+        {
+            try
+            {
+                double metabSkillLv = character?.Skills?.Common.FirstOrDefault(a => a.Id == SkillTypes.Metabolism)?.Progress ?? 0;
+                return charType.metabolism_skill_cap ? Math.Min(metabSkillLv, charType.metabolism_skill_cap_value) : metabSkillLv;
+            }
+            catch (Exception)
+            {
+                throw new Exception($"Metabolism skill level missing.");
+            }
+        }
+
+        private void ModyfyMetabolism<T, E, G, H>(double accLv, PmcData character, ICharacter<T, E, G, H> charType)
+        {
+            IMetabolism metabolismPerSkill = charType.metabolism_per_skill as IMetabolism;
+            double metabolismSkill = GetMetabolismLevel(character, charType);
+
+            int? restSpaceLevel = 0;
+            double maxEnergy = 100;
+            if (_config.debug)
+            {
+                _logger.Info($"{LogPrefix}ModyfyMetabolism: charType is {charType.GetType()}");
+            }
+            if (charType is PMC)
+            { 
+                restSpaceLevel = character.Hideout.Areas.Where(a => a.Type == HideoutAreas.RestSpace).Select(a => a.Level).FirstOrDefault();
+                maxEnergy = restSpaceLevel == 3 ? 110 : 100;
+            }
+            if (_config.debug)
+            {
+                _logger.Info($"{LogPrefix}Calculating metabolism. metabolismSkill: {metabolismSkill}");
+            }
+
+            character.Health.Hydration.Maximum = 100 + CalculateMetabolismPerSkill(charType, metabolismSkill, metabolismPerSkill.hydration);
+            character.Health.Energy.Maximum = maxEnergy + CalculateMetabolismPerSkill(charType, metabolismSkill, metabolismPerSkill.energy);
+        }
+
+        private double CalculateMetabolismPerSkill<T, E, G, H>(ICharacter<T, E, G, H> charType, double metabolismSkill, float skillBonus)
+        {
+            return charType.metabolism_per_skill != null ?
+                Math.Floor(metabolismSkill / 100 / charType.metabolism_skill_levels_per_increment) * skillBonus :
+                0;
+        }
+
+        private void ValidateProfile<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType)
         {
             if (character.Info == null)
             {
@@ -287,7 +337,7 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private void ModifyHealth<T, E, G>(double accLv, ICharacter<T, E, G> charType, double hpSkillv, string bodyPartName, BodyPartHealth bodyPart)
+        private void ModifyHealth<T, E, G, H>(double accLv, ICharacter<T, E, G, H> charType, double hpSkillv, string bodyPartName, BodyPartHealth bodyPart)
         {
             IHealth baseHealth = charType.base_health as IHealth;
             IHealth increaseHealth = charType.increase_per_level as IHealth;
@@ -357,19 +407,19 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private double AddHpPerLevel<T, E, G>(double inrement, ICharacter<T, E, G> charType, BodyPartHealth bodyPart, float baseHealth, float increaseHealth)
+        private double AddHpPerLevel<T, E, G, H>(double inrement, ICharacter<T, E, G, H> charType, BodyPartHealth bodyPart, float baseHealth, float increaseHealth)
         {
             return baseHealth + (inrement * increaseHealth);
         }
 
-        private double AddHpPerSkillLevel<T, E, G>(ICharacter<T, E, G> charType, double hpSkillv, BodyPartHealth bodyPart, float increasePerHealthSkill)
+        private double AddHpPerSkillLevel<T, E, G, H>(ICharacter<T, E, G, H> charType, double hpSkillv, BodyPartHealth bodyPart, float increasePerHealthSkill)
         {
             return charType.health_per_health_skill_level ?
                 Math.Floor(hpSkillv / 100 / charType.health_skill_levels_per_increment) * increasePerHealthSkill :
                 0;
         }
 
-        private static double GetHealthLevel<T, E, G>(PmcData character, ICharacter<T, E, G> charType)
+        private static double GetHealthLevel<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType)
         {
             try
             {
@@ -382,14 +432,14 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private int CheckLevelCap<T, E, G>(PmcData character, ICharacter<T, E, G> charType)
+        private int CheckLevelCap<T, E, G, H>(PmcData character, ICharacter<T, E, G, H> charType)
         {
             return charType.level_cap ? Math.Min(character.Info.Level.Value, charType.level_cap_value) : character.Info.Level.Value;
         }
 
         private void ResetScavHealthOnLoad(BodyPartHealth bodyPart, IHealth baseHealth)
         {
-            if (baseHealth is Base_Health_SCAV && isOnLoad)
+            if (baseHealth is config.BodyHealth && isOnLoad)
             {
                 bodyPart.Health.Current = bodyPart.Health.Maximum;
             }
@@ -403,7 +453,7 @@ namespace HealthPerLevel_cs
             }
         }
 
-        private double GetIncrement<T, E, G>(double accountLevel, ICharacter<T, E, G> charType)
+        private double GetIncrement<T, E, G, H>(double accountLevel, ICharacter<T, E, G, H> charType)
         {
             return Math.Truncate((accountLevel) / (double)charType.levels_per_increment);
         }
