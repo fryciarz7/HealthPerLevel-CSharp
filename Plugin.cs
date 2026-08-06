@@ -1,6 +1,8 @@
-﻿using SPTarkov.DI.Annotations;
+﻿using SPTarkov.Common.Models.Logging;
+using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Helpers;
+using SPTarkov.Server.Core.Helpers.Server;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Bot;
 using SPTarkov.Server.Core.Models.Eft.Common;
@@ -13,34 +15,36 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace HealthPerLevel_cs;
-public record ModMetadata : AbstractModMetadata
+public record ModMetadata : IModMetadata
 {
-    public override string ModGuid { get; init; } = "com.fryciarz7.spt.hpl";
-    public override string Name { get; init; } = "Health Per Level";
-    public override string Author { get; init; } = "fryciarz7";
-    public override List<string>? Contributors { get; init; }
-    public override SemanticVersioning.Version Version { get; init; } = new("2.1.0");
-    public override SemanticVersioning.Range SptVersion { get; init; } = new("~4.0.11");
+    public string ModGuid { get; init; } = "com.fryciarz7.spt.hpl";
+    public string Name { get; init; } = "Health Per Level";
+    public string Author { get; init; } = "fryciarz7";
+    public List<string>? Contributors { get; init; }
+    public SemanticVersioning.Version Version { get; init; } = new("2.2.0");
+    public SemanticVersioning.Range SptVersion { get; init; } = new("~4.1.0");
 
-    public override List<string>? Incompatibilities { get; init; }
-    public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; }
-    public override string? Url { get; init; }
-    public override bool? IsBundleMod { get; init; }
-    public override string? License { get; init; } = "Creative Commons BY-NC-SA 3.0";
+    public List<string>? Incompatibilities { get; init; }
+    public Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; }
+    public string? Url { get; init; }
+    public bool? IsBundleMod { get; init; }
+    public string? License { get; init; } = "Creative Commons BY-NC-SA 3.0";
+    public bool HasPrepatcher { get; init; }
 }
 
 [Injectable]
 public class HealthChangesRoute(JsonUtil jsonUtil, HealthChangesCallbacks callbacks) : StaticRouter(
     jsonUtil, [
         new RouteAction<GenerateBotsRequestData>(
-                "/client/game/bot/generate",
-                async (
-                    url,
-                    info,
-                    sessionId,
-                    output
-                ) => await callbacks.HandleGenerateBotsRoute(url, info, sessionId, output)
-                ),
+            "/client/game/bot/generate",
+            async (
+                url,
+                info,
+                sessionId,
+                output,
+                cancellationToken
+                ) => await callbacks.HandleGenerateBotsRoute(url, info, sessionId, output, cancellationToken)
+            ),
         new RouteAction<EmptyRequestData>(
             // "/client/game/start",
             "/client/game/profile/select",
@@ -48,8 +52,9 @@ public class HealthChangesRoute(JsonUtil jsonUtil, HealthChangesCallbacks callba
                 url,
                 info,
                 sessionId,
-                output
-                ) => await callbacks.HandleProfileSelectRoute(url, info, sessionId, output)
+                output,
+                cancellationToken
+                ) => await callbacks.HandleProfileSelectRoute(url, info, sessionId, output, cancellationToken)
             ),
         new RouteAction<EmptyRequestData>(
             "/client/game/start",
@@ -57,8 +62,9 @@ public class HealthChangesRoute(JsonUtil jsonUtil, HealthChangesCallbacks callba
                 url,
                 info,
                 sessionId,
-                output
-                ) => await callbacks.HandleGameStartRoute(url, info, sessionId, output)
+                output,
+                cancellationToken
+                ) => await callbacks.HandleGameStartRoute(url, info, sessionId, output, cancellationToken)
             )
         ]
     )
@@ -73,17 +79,17 @@ public class HealthChangesRoute(JsonUtil jsonUtil, HealthChangesCallbacks callba
 public class HealthChangesCallbacks(ISptLogger<HealthChangesCallbacks> logger, ModHelper modHelper, HttpResponseUtil httpResponseUtil,
         HealthPerLevel hpl)
 {
-    public ValueTask<string> HandleGenerateBotsRoute(string url, GenerateBotsRequestData info, MongoId sessionId, string? output)
+    public ValueTask<string> HandleGenerateBotsRoute(string url, GenerateBotsRequestData info, MongoId sessionId, string? output, CancellationToken cancellationToken)
     {
         return hpl.ModifyBotHealth(output);
     }
-    public ValueTask<string> HandleProfileSelectRoute(string url, EmptyRequestData info, MongoId sessionId, string? output)
+    public ValueTask<string> HandleProfileSelectRoute(string url, EmptyRequestData info, MongoId sessionId, string? output, CancellationToken cancellationToken)
     {
         hpl.DoStuff(false);
         return ValueTask.FromResult(output);
     }
 
-    internal ValueTask<string> HandleGameStartRoute(string url, EmptyRequestData info, MongoId sessionId, string? output)
+    internal ValueTask<string> HandleGameStartRoute(string url, EmptyRequestData info, MongoId sessionId, string? output, CancellationToken cancellationToken)
     {
         hpl.DoStuff(true);
         logger.Info("[HealthPerLevel] Game started, health adjusted.");
